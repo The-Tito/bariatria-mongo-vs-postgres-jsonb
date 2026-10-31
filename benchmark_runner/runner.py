@@ -13,6 +13,8 @@ Uso:
   python benchmark_runner/runner.py --engine postgres --profile C --query Q1 --concurrency 50 --run 1
 Variante de memoria (experimento complementario, solo PostgreSQL): --work-mem 64MB. La fila se registra con
 query_id "<consulta>_WM<n>" (p. ej., Q1_WM64) para que no se confunda con la configuración de fábrica.
+Recalcular las series de cAdvisor de corridas anteriores al filtro por ID de contenedor:
+  python benchmark_runner/runner.py --recalcular results/runs/<id> [...]
 Opciones de prueba (no producen mediciones válidas): --salida DIR, --calentamiento S, --medicion S,
 --enfriamiento S.
 """
@@ -24,6 +26,7 @@ import multiprocessing as mp
 import re
 import shutil
 import subprocess
+import sys
 import threading
 import time
 import urllib.parse
@@ -190,6 +193,62 @@ def series(contenedor_id, ini, fin):
     return datos
 
 
+def guardar_metricas(carpeta, meta, contenedor_id):
+    """Escribe metricas.csv.gz con las series del contenedor y devuelve el RSS máximo de la ventana (MiB)."""
+    f = meta["fases"]
+    datos = series(contenedor_id, f["preparacion_fin"], f["enfriamiento_fin"])
+    with gzip.open(carpeta / "metricas.csv.gz", "wt", newline="") as arch:
+        w = csv.writer(arch)
+        claves = ["cpu_uso_nucleos", "cpu_throttled_s", "rss_bytes", "working_set_bytes"]
+        w.writerow(["t", *claves])
+        for t in sorted(datos):
+            w.writerow([t, *[datos[t].get(k, "") for k in claves]])
+    en_ventana = [v for t, v in datos.items() if f["ventana_inicio"] <= t <= f["ventana_fin"]]
+    rss = [v["rss_bytes"] for v in en_ventana if "rss_bytes" in v]
+    ws = [v["working_set_bytes"] for v in en_ventana if "working_set_bytes" in v]
+    meta["max_working_set_mb"] = round(max(ws) / 1024 ** 2, 1) if ws else None
+    return round(max(rss) / 1024 ** 2, 1) if rss else None
+
+
+def escribir_fila(csv_path, fila):
+    """Agrega la fila al CSV; si la corrida ya estaba registrada, la reemplaza."""
+    llave = ("engine", "profile", "query_id", "concurrency", "run_number")
+    filas = []
+    if csv_path.exists():
+        with open(csv_path, newline="") as f:
+            filas = [r for r in csv.DictReader(f) if tuple(r[k] for k in llave) != tuple(str(fila[k]) for k in llave)]
+    filas.append(fila)
+    with open(csv_path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=COLUMNAS)
+        w.writeheader()
+        w.writerows(filas)
+
+
+def recalcular(carpeta):
+    """Rehace las series de cAdvisor y max_rss_mb de una corrida hecha antes de filtrar por ID de contenedor.
+
+    Identifica el contenedor de la corrida por su hora de arranque (container_start_time_seconds de cAdvisor
+    frente a StartedAt de docker inspect, guardado en meta.json).
+    """
+    from datetime import datetime
+    meta = json.loads((carpeta / "meta.json").read_text())
+    if "id" not in meta["contenedor_inicio"]:
+        inicio = datetime.fromisoformat(meta["contenedor_inicio"]["started_at"][:26].rstrip("Z") + "+00:00").timestamp()
+        nombre = CONTENEDOR[meta["engine"]]
+        candidatos = prom("query_range", query=f'container_start_time_seconds{{name="{nombre}"}}',
+                          start=meta["fases"]["preparacion_fin"], end=meta["fases"]["enfriamiento_fin"], step="5s")
+        mejor = min(candidatos, key=lambda s: abs(float(s["values"][0][1]) - inicio))
+        meta["contenedor_inicio"]["id"] = mejor["metric"]["id"].removeprefix("/docker/")
+    anterior = meta["fila_csv"]["max_rss_mb"]
+    max_rss = guardar_metricas(carpeta, meta, meta["contenedor_inicio"]["id"])
+    meta["fila_csv"]["max_rss_mb"] = max_rss if max_rss is not None else ""
+    meta["recalculado"] = {"fecha": time.time(), "max_rss_mb_anterior": anterior,
+                           "motivo": "series de cAdvisor mezcladas con las del contenedor anterior (filtro por nombre)"}
+    (carpeta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+    escribir_fila(carpeta.parent.parent / "mediciones.csv", meta["fila_csv"])
+    print(f"[{meta['id']}] max_rss_mb {anterior} -> {meta['fila_csv']['max_rss_mb']}")
+
+
 # ---------------------------------------------------------------------------------------------------
 # Corrida
 
@@ -314,19 +373,7 @@ def correr(a):
     # RSS y series de cAdvisor
     max_rss = None
     try:
-        datos = series(meta["contenedor_inicio"]["id"], meta["fases"]["preparacion_fin"],
-                       meta["fases"]["enfriamiento_fin"])
-        with gzip.open(carpeta / "metricas.csv.gz", "wt", newline="") as f:
-            w = csv.writer(f)
-            claves = ["cpu_uso_nucleos", "cpu_throttled_s", "rss_bytes", "working_set_bytes"]
-            w.writerow(["t", *claves])
-            for t in sorted(datos):
-                w.writerow([t, *[datos[t].get(k, "") for k in claves]])
-        rss = [v["rss_bytes"] for t, v in datos.items() if ventana_ini <= t <= ventana_fin and "rss_bytes" in v]
-        ws = [v["working_set_bytes"] for t, v in datos.items()
-              if ventana_ini <= t <= ventana_fin and "working_set_bytes" in v]
-        max_rss = round(max(rss) / 1024 ** 2, 1) if rss else None
-        meta["max_working_set_mb"] = round(max(ws) / 1024 ** 2, 1) if ws else None
+        max_rss = guardar_metricas(carpeta, meta, meta["contenedor_inicio"]["id"])
     except Exception as e:
         meta["prometheus_error"] = f"{type(e).__name__}: {e}"
 
@@ -359,24 +406,17 @@ def correr(a):
     meta["fila_csv"] = fila
     (carpeta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
 
-    # Repetir una corrida reemplaza su fila en lugar de duplicarla
-    csv_path = salida / "mediciones.csv"
-    llave = ("engine", "profile", "query_id", "concurrency", "run_number")
-    filas = []
-    if csv_path.exists():
-        with open(csv_path, newline="") as f:
-            filas = [r for r in csv.DictReader(f) if tuple(r[k] for k in llave) != tuple(str(fila[k]) for k in llave)]
-    filas.append(fila)
-    with open(csv_path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=COLUMNAS)
-        w.writeheader()
-        w.writerows(filas)
+    escribir_fila(salida / "mediciones.csv", fila)
     print(f"[{run_id}] {status}: {len(exitosas)} consultas en la ventana, QPS {fila['throughput_qps']}, "
           f"P99 {fila['latency_p99_ms']} ms, throttling {fila['cpu_throttled_seconds']} s, "
           f"RSS máx {fila['max_rss_mb']} MiB, spill {fila['disk_spill']}", flush=True)
 
 
 def main():
+    if sys.argv[1:2] == ["--recalcular"]:
+        for ruta in sys.argv[2:]:
+            recalcular(Path(ruta))
+        return
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--engine", choices=["mongo", "postgres"], required=True)
     ap.add_argument("--profile", choices=list(PERFILES), required=True)
