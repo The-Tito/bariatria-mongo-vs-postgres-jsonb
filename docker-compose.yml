@@ -1,0 +1,104 @@
+# Motores y telemetría del experimento.
+#
+# Perfiles de recursos (playbook §3). run_benchmarks.sh fija DB_CPUS y DB_MEM según el perfil:
+#   PROFILE_A_BASELINE  DB_CPUS=4  DB_MEM=4096m
+#   PROFILE_B_MEDIUM    DB_CPUS=2  DB_MEM=2048m
+#   PROFILE_C_SEVERE    DB_CPUS=1  DB_MEM=1024m
+# El swap se desactiva con memswap_limit = mem_limit: en cgroups v2 Docker ignora mem_swappiness.
+#
+# Los puertos del host (MONGO_PORT=27018, PG_PORT=5433) evitan chocar con instalaciones locales.
+#
+# Se levanta un motor a la vez, junto con la telemetría:
+#   DB_CPUS=1 DB_MEM=1024m docker compose --profile mongo up -d
+#   DB_CPUS=1 DB_MEM=1024m docker compose --profile postgres up -d
+#
+# Ambos motores usan su configuración de fábrica (caché de WiredTiger, shared_buffers = 128MB),
+# que es la que tendría un despliegue sin afinar. Las únicas opciones agregadas solo dejan evidencia
+# de volcado a disco y no cambian los planes de ejecución.
+
+x-db-limits: &db-limits
+  cpus: ${DB_CPUS:-4}
+  mem_limit: ${DB_MEM:-4096m}
+  memswap_limit: ${DB_MEM:-4096m}
+
+services:
+  mongo:
+    image: mongo:8.0.32
+    profiles: [mongo]
+    container_name: bench-mongo
+    <<: *db-limits
+    ports: ["127.0.0.1:${MONGO_PORT:-27018}:27017"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  postgres:
+    image: postgres:18.4
+    profiles: [postgres]
+    container_name: bench-postgres
+    <<: *db-limits
+    # /dev/shm por defecto mide 64 MB y las consultas paralelas reservan ahí su memoria compartida.
+    # Es solo un tope: lo que se usa cuenta dentro del límite de memoria del contenedor.
+    shm_size: 1g
+    environment:
+      POSTGRES_USER: bench
+      POSTGRES_PASSWORD: bench
+      POSTGRES_DB: bariatria
+    # log_temp_files=0 registra cada archivo temporal: es la evidencia de spill de Postgres.
+    command: ["postgres", "-c", "log_temp_files=0"]
+    ports: ["127.0.0.1:${PG_PORT:-5433}:5432"]
+    volumes:
+      - pg-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "bench", "-d", "bariatria"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6
+    container_name: bench-cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg
+    command:
+      - --housekeeping_interval=1s
+      - --docker_only=true
+      - --store_container_labels=false
+      - --whitelisted_container_labels=com.docker.compose.service
+    volumes:
+      - /:/rootfs:ro
+      # Solo los sockets de Docker y containerd (Docker Desktop usa el almacén de imágenes de
+      # containerd); montar /var/run completo en solo lectura impide montar el segundo socket.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /run/containerd/containerd.sock:/run/containerd/containerd.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    container_name: bench-node-exporter
+    pid: host
+    command: ["--path.rootfs=/host"]
+    volumes:
+      - /:/host:ro
+
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    container_name: bench-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+    ports: ["127.0.0.1:9090:9090"]
+    volumes:
+      - ./telemetry/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom-data:/prometheus
+
+volumes:
+  mongo-data:
+  pg-data:
+  prom-data:
