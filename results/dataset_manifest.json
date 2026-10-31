@@ -1,6 +1,6 @@
 {
   "archivo": "data/visitas.ndjson.gz",
-  "sha256_sin_comprimir": "8d600ad26eefe3093344dc8e3637f81e0e86050dc6a74129676edae381440537",
+  "sha256_sin_comprimir": "e01c2e147b201c887f00253ee71b0792e42c34d669241300ed0990c5d5db3aba",
   "parametros": {
     "semilla": 20261028,
     "pacientes": 10000,
@@ -57,26 +57,43 @@
       "signos_vitales": 90.0,
       "bioimpedancia": 50.0
     },
+    "medicamentos_por_visita": {
+      "promedio": 2.99,
+      "distribucion": {
+        "0": 9761,
+        "1": 36144,
+        "2": 127019,
+        "3": 170409,
+        "4": 104366,
+        "5": 39780,
+        "6": 10702,
+        "7": 1662,
+        "8": 157
+      }
+    },
+    "q1_filas_desanidadas": 1494875,
+    "q1_filas_duracion_ge_60": 783966,
+    "q1_grupos_anio_medicamento": 144,
     "pct_glucosa_ge_100": 45.7,
     "pct_sin_imc": 2.03,
     "visitas_abiertas": 181,
     "pct_cierre_automatico": 5.0,
     "q2_visitas_cerradas_2026": 53760,
     "bytes_json": {
-      "p50": 1012,
-      "p95": 1312,
-      "p99": 1416,
-      "max": 1521,
-      "promedio": 1012
+      "p50": 1254,
+      "p95": 1568,
+      "p99": 1699,
+      "max": 2080,
+      "promedio": 1259
     },
     "bytes_bson": {
-      "p50": 1016,
-      "p95": 1345,
-      "p99": 1460,
-      "max": 1568,
-      "promedio": 1018
+      "p50": 1287,
+      "p95": 1627,
+      "p99": 1768,
+      "max": 2181,
+      "promedio": 1289
     },
-    "pct_bson_mayor_2kb": 0.0
+    "pct_bson_mayor_2kb": 0.01
   },
-  "segundos": 30.2
+  "segundos": 31.2
 }

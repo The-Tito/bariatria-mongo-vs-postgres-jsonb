@@ -71,17 +71,28 @@ DIETAS = [
     ("Dieta líquida progresiva", "Líquidos claros 3 días, después licuados proteicos; sorbos pequeños."),
     ("Mediterránea baja en sodio", "Aceite de oliva, pescado dos veces por semana; menos de 2 g de sodio."),
 ]
-MEDICAMENTOS = [
-    ("Metformina", "850 mg", "cada 12 h"),
-    ("Orlistat", "120 mg", "con cada comida"),
-    ("Liraglutida", "3 mg", "cada 24 h"),
-    ("Semaglutida", "1 mg", "cada semana"),
-    ("Losartán", "50 mg", "cada 24 h"),
-    ("Omeprazol", "20 mg", "cada 24 h"),
-    ("Multivitamínico", "1 tableta", "cada 24 h"),
-    ("Citrato de calcio", "500 mg", "cada 12 h"),
-]
-DURACIONES = ["15 días", "30 días", "60 días", "90 días"]
+# Fármaco: (categoría, [(dosis_mg por toma, tomas_por_dia), ...])
+FARMACOS = {
+    "Metformina": ("antidiabetico", [(500.0, 2), (850.0, 2)]),
+    "Dapagliflozina": ("antidiabetico", [(10.0, 1)]),
+    "Sitagliptina": ("antidiabetico", [(100.0, 1)]),
+    "Losartán": ("antihipertensivo", [(50.0, 1), (100.0, 1)]),
+    "Enalapril": ("antihipertensivo", [(10.0, 2)]),
+    "Amlodipino": ("antihipertensivo", [(5.0, 1), (10.0, 1)]),
+    "Citrato de calcio": ("suplemento", [(500.0, 2), (500.0, 3)]),
+    "Vitamina B12": ("suplemento", [(1.0, 1)]),
+    "Sulfato ferroso": ("suplemento", [(200.0, 1), (200.0, 2)]),
+    "Omeprazol": ("gastroprotector", [(20.0, 1), (20.0, 2)]),
+    "Orlistat": ("antiobesidad", [(120.0, 3)]),
+}
+# Duración de cada prescripción por categoría: (días posibles, pesos)
+DURACIONES = {
+    "antidiabetico": ([30, 60, 90], [5, 3, 2]),
+    "antihipertensivo": ([30, 60, 90], [5, 3, 2]),
+    "suplemento": ([30, 60, 90], [4, 2, 4]),
+    "gastroprotector": ([15, 30], [1, 1]),
+    "antiobesidad": ([30], [1]),
+}
 
 
 def rng(*partes):
@@ -128,7 +139,44 @@ def crear_paciente(pid):
         "glucosa_base": glucosa_base,
         "mejora_glucosa": r.uniform(0.3, 0.9) if categoria != "normal" else r.uniform(0.0, 0.3),
         "z_seguimiento": r.gauss(0, 1),
+        "medicacion": plan_medicacion(pid, sexo, categoria),
     }
+
+
+def plan_medicacion(pid, sexo, categoria):
+    """Fármacos del paciente con su dosis y la ventana en que los toma.
+
+    Cada entrada: (nombre, dosis_mg, tomas, desde_dia, hasta_dia, retiro_por_perdida). Los antidiabéticos y
+    antihipertensivos se retiran cuando la pérdida de peso alcanza retiro_por_perdida; los suplementos
+    empiezan al día 30 y son de por vida; omeprazol y orlistat son temporales.
+    """
+    r = rng("medicacion", pid)
+    sin_fin = 10 ** 6
+    plan = []
+
+    def agregar(nombre, desde=0, hasta=sin_fin, retiro=None):
+        dosis, tomas = r.choice(FARMACOS[nombre][1])
+        plan.append((nombre, dosis, tomas, desde, hasta, retiro))
+
+    if categoria == "diabetes":
+        agregar("Metformina", retiro=r.uniform(0.15, 0.40))
+        if r.random() < 0.40:
+            agregar(r.choice(["Dapagliflozina", "Sitagliptina"]), retiro=r.uniform(0.08, 0.25))
+    elif categoria == "prediabetes" and r.random() < 0.50:
+        agregar("Metformina", retiro=r.uniform(0.08, 0.25))
+    if r.random() < 0.40:
+        agregar(r.choice(["Losartán", "Enalapril", "Amlodipino"]), retiro=r.uniform(0.12, 0.45))
+    if r.random() < 0.95:
+        agregar("Citrato de calcio", desde=30)
+    if r.random() < 0.85:
+        agregar("Vitamina B12", desde=30)
+    if r.random() < (0.60 if sexo == "F" else 0.25):
+        agregar("Sulfato ferroso", desde=30)
+    if r.random() < 0.40:
+        agregar("Omeprazol", hasta=180)
+    if r.random() < 0.20:
+        agregar("Orlistat", hasta=365)
+    return plan
 
 
 def agenda(p):
@@ -279,12 +327,19 @@ def crear_visita(p, k, t, fecha_local):
     if r.random() < 0.55:
         nombre, indicaciones = r.choice(DIETAS)
         visita["dieta"] = {"nombre": nombre, "indicaciones": indicaciones}
-    if r.random() < 0.45:
-        visita["medicamentos"] = [
-            {"nombre": n, "dosis": d, "frecuencia": f, "duracion": r.choice(DURACIONES)}
-            for n, d, f in r.sample(MEDICAMENTOS, r.randint(1, 3))
-        ]
+    visita["medicamentos"] = medicacion_vigente(p, t, L, r)
     return visita
+
+
+def medicacion_vigente(p, t, L, r):
+    vigentes = []
+    for nombre, dosis, tomas, desde, hasta, retiro in p["medicacion"]:
+        if desde <= t < hasta and (retiro is None or L < retiro):
+            categoria = FARMACOS[nombre][0]
+            dias, pesos = DURACIONES[categoria]
+            vigentes.append({"nombre": nombre, "categoria": categoria, "dosis_mg": dosis,
+                             "tomas_por_dia": tomas, "duracion_dias": r.choices(dias, weights=pesos)[0]})
+    return vigentes
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -312,7 +367,8 @@ def generar():
     ARCHIVO.parent.mkdir(exist_ok=True)
     sha = hashlib.sha256()
     tam_json, tam_bson = [], []
-    por_anio, estudios_tipo, n_estudios = Counter(), Counter(), Counter()
+    por_anio, estudios_tipo, n_estudios, n_meds, q1_grupos = Counter(), Counter(), Counter(), Counter(), set()
+    q1_filas = 0
     glucosas = altas = sin_imc = abiertas = cierre_auto = 0
     periodo_q2 = 0
     q2_ini, q2_fin = "2026-01-01T06:00:00.000Z", "2027-01-01T06:00:00.000Z"
@@ -332,6 +388,11 @@ def generar():
                 if e["tipo_estudio"] == "signos_vitales":
                     glucosas += 1
                     altas += e["mediciones"]["glucosa_mg_dl"] >= 100
+            n_meds[len(v["medicamentos"])] += 1
+            for m in v["medicamentos"]:
+                if m["duracion_dias"] >= 60:
+                    q1_filas += 1
+                    q1_grupos.add(((fecha.year), m["nombre"]))
             sin_imc += "imc" not in v["resumen"]
             abiertas += v["estado"] == "abierta"
             cierre_auto += v.get("cerrada_en", "").endswith("05:59:59.000Z")
@@ -358,6 +419,11 @@ def generar():
             "estudios_por_visita": {"promedio": round(sum(k * n for k, n in n_estudios.items()) / len(orden), 2),
                                     "distribucion": dict(sorted(n_estudios.items()))},
             "pct_visitas_con_estudio": {k: round(100 * n / len(orden), 1) for k, n in estudios_tipo.items()},
+            "medicamentos_por_visita": {"promedio": round(sum(k * n for k, n in n_meds.items()) / len(orden), 2),
+                                        "distribucion": dict(sorted(n_meds.items()))},
+            "q1_filas_desanidadas": sum(k * n for k, n in n_meds.items()),
+            "q1_filas_duracion_ge_60": q1_filas,
+            "q1_grupos_anio_medicamento": len(q1_grupos),
             "pct_glucosa_ge_100": round(100 * altas / glucosas, 1),
             "pct_sin_imc": round(100 * sin_imc / len(orden), 2),
             "visitas_abiertas": abiertas,
