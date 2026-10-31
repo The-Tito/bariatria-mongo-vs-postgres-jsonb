@@ -3,7 +3,7 @@
   "title": "visitas",
   "description": "Una atención clínica de un paciente con sus estudios embebidos (ADR-12). Los rangos son límites de plausibilidad para detectar errores del generador, no rangos clínicos.",
   "additionalProperties": false,
-  "required": ["_id", "paciente_id", "fecha", "tipo", "estado", "datos_paciente", "resumen", "estudios"],
+  "required": ["_id", "paciente_id", "fecha", "tipo", "estado", "datos_paciente", "resumen", "estudios", "medicamentos"],
   "properties": {
     "_id": { "bsonType": "binData", "description": "UUID v4 generado por el cliente; garantiza la idempotencia del registro (ADR-14)" },
     "paciente_id": { "bsonType": "objectId" },
@@ -164,16 +164,18 @@
     },
     "medicamentos": {
       "bsonType": "array",
-      "maxItems": 5,
+      "description": "Medicación vigente indicada en la visita; vacío si no hay ninguna. Todos los elementos tienen la misma forma",
+      "maxItems": 8,
       "items": {
         "bsonType": "object",
         "additionalProperties": false,
-        "required": ["nombre", "dosis", "frecuencia", "duracion"],
+        "required": ["nombre", "categoria", "dosis_mg", "tomas_por_dia", "duracion_dias"],
         "properties": {
           "nombre": { "bsonType": "string" },
-          "dosis": { "bsonType": "string" },
-          "frecuencia": { "bsonType": "string" },
-          "duracion": { "bsonType": "string" }
+          "categoria": { "enum": ["antidiabetico", "antihipertensivo", "suplemento", "gastroprotector", "antiobesidad"] },
+          "dosis_mg": { "bsonType": "double", "minimum": 0.1, "maximum": 3000, "description": "Dosis por toma" },
+          "tomas_por_dia": { "bsonType": "int", "minimum": 1, "maximum": 4 },
+          "duracion_dias": { "bsonType": "int", "minimum": 1, "maximum": 365 }
         }
       }
     }

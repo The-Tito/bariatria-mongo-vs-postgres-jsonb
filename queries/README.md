@@ -66,7 +66,7 @@ vienen de RN-03 (peso, estatura, presión sistólica) son los ejemplos del proye
 | `estudios[]` | array | sí | 1 a 4 estudios, cada uno de un tipo |
 | `notas` | string | no | hasta 1000 caracteres |
 | `dieta` | `{nombre, indicaciones}` | no | |
-| `medicamentos[]` | `{nombre, dosis, frecuencia, duracion}` | no | hasta 5 |
+| `medicamentos[]` | `{nombre, categoria, dosis_mg, tomas_por_dia, duracion_dias}` | sí (puede ir vacío) | hasta 8; ver abajo |
 
 ### Tipos de estudio (`estudios[].tipo_estudio`)
 
@@ -80,3 +80,19 @@ vienen de RN-03 (peso, estatura, presión sistólica) son los ejemplos del proye
 Cada tipo aparece como máximo una vez por visita; eso lo garantiza el generador, porque `$jsonSchema` no
 puede exigir valores únicos de un campo dentro de un arreglo. El validador rechaza campos no declarados
 (`additionalProperties: false`) y tipos numéricos distintos: un `int` donde se espera `double` es un error.
+
+### Medicación vigente (`medicamentos[]`)
+
+Es el arreglo que desanida Q1. A diferencia de `estudios[]`, **todos sus elementos tienen la misma forma**,
+como `items` en el playbook.
+
+| Campo | Tipo BSON | Rango o valores |
+|---|---|---|
+| `nombre` | string | p. ej. `Metformina`, `Citrato de calcio` |
+| `categoria` | string | `antidiabetico`, `antihipertensivo`, `suplemento`, `gastroprotector`, `antiobesidad` |
+| `dosis_mg` | double | 0.1–3000 (dosis por toma) |
+| `tomas_por_dia` | int | 1–4 |
+| `duracion_dias` | int | 1–365 |
+
+La dosis diaria es `dosis_mg × tomas_por_dia`, el equivalente a `qty × price` del playbook.
+
