@@ -1,0 +1,136 @@
+== 14:02:00 variante 1 de 27
+[postgres_A_Q1_WM64_c1_r1] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c1_r1] enfriamiento 60 s
+[postgres_A_Q1_WM64_c1_r1] spill: 172 consultas en la ventana, QPS 0.5733, P99 1794.553 ms, throttling 0.0 s, RSS máx 293.9 MiB, spill true
+== 14:09:08 variante 2 de 27
+[postgres_A_Q1_WM64_c10_r1] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c10_r1] enfriamiento 60 s
+[postgres_A_Q1_WM64_c10_r1] spill: 288 consultas en la ventana, QPS 0.96, P99 13481.916 ms, throttling 1305.917 s, RSS máx 1669.1 MiB, spill true
+== 14:16:21 variante 3 de 27
+[postgres_A_Q1_WM64_c50_r1] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c50_r1] enfriamiento 60 s
+[postgres_A_Q1_WM64_c50_r1] oom: 2 consultas en la ventana, QPS 0.0067, P99 8474.997 ms, throttling 1512.905 s, RSS máx 3866.7 MiB, spill true
+== 14:23:38 variante 4 de 27
+[postgres_B_Q1_WM64_c1_r1] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c1_r1] enfriamiento 60 s
+[postgres_B_Q1_WM64_c1_r1] spill: 141 consultas en la ventana, QPS 0.47, P99 3053.059 ms, throttling 86.318 s, RSS máx 295.7 MiB, spill true
+== 14:30:49 variante 5 de 27
+[postgres_B_Q1_WM64_c10_r1] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c10_r1] enfriamiento 60 s
+[postgres_B_Q1_WM64_c10_r1] spill: 118 consultas en la ventana, QPS 0.3933, P99 27408.537 ms, throttling 2057.023 s, RSS máx 1634.3 MiB, spill true
+== 14:37:58 variante 6 de 27
+[postgres_B_Q1_WM64_c50_r1] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c50_r1] enfriamiento 60 s
+[postgres_B_Q1_WM64_c50_r1] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2886.844 s, RSS máx 1961.8 MiB, spill 
+== 14:45:10 variante 7 de 27
+[postgres_C_Q1_WM64_c1_r1] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c1_r1] enfriamiento 60 s
+[postgres_C_Q1_WM64_c1_r1] spill: 87 consultas en la ventana, QPS 0.29, P99 5212.277 ms, throttling 331.231 s, RSS máx 304.0 MiB, spill true
+== 14:52:21 variante 8 de 27
+[postgres_C_Q1_WM64_c10_r1] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c10_r1] enfriamiento 60 s
+[postgres_C_Q1_WM64_c10_r1] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2364.659 s, RSS máx 974.0 MiB, spill 
+== 14:59:31 variante 9 de 27
+[postgres_C_Q1_WM64_c50_r1] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c50_r1] enfriamiento 60 s
+[postgres_C_Q1_WM64_c50_r1] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 3312.378 s, RSS máx 955.4 MiB, spill 
+== 15:06:53 variante 10 de 27
+[postgres_A_Q1_WM64_c1_r2] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c1_r2] enfriamiento 60 s
+[postgres_A_Q1_WM64_c1_r2] spill: 171 consultas en la ventana, QPS 0.57, P99 1816.612 ms, throttling 0.0 s, RSS máx 295.8 MiB, spill true
+== 15:14:03 variante 11 de 27
+[postgres_A_Q1_WM64_c10_r2] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c10_r2] enfriamiento 60 s
+[postgres_A_Q1_WM64_c10_r2] spill: 293 consultas en la ventana, QPS 0.9767, P99 12592.599 ms, throttling 1277.243 s, RSS máx 1637.2 MiB, spill true
+== 15:21:16 variante 12 de 27
+[postgres_A_Q1_WM64_c50_r2] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c50_r2] enfriamiento 60 s
+[postgres_A_Q1_WM64_c50_r2] oom: 3 consultas en la ventana, QPS 0.01, P99 18442.937 ms, throttling 1488.548 s, RSS máx 3896.4 MiB, spill true
+== 15:28:29 variante 13 de 27
+[postgres_B_Q1_WM64_c1_r2] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c1_r2] enfriamiento 60 s
+[postgres_B_Q1_WM64_c1_r2] spill: 141 consultas en la ventana, QPS 0.47, P99 3485.482 ms, throttling 85.956 s, RSS máx 300.4 MiB, spill true
+== 15:35:38 variante 14 de 27
+[postgres_B_Q1_WM64_c10_r2] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c10_r2] enfriamiento 60 s
+[postgres_B_Q1_WM64_c10_r2] spill: 120 consultas en la ventana, QPS 0.4, P99 29205.031 ms, throttling 2004.501 s, RSS máx 1637.5 MiB, spill true
+== 15:42:59 variante 15 de 27
+[postgres_B_Q1_WM64_c50_r2] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c50_r2] enfriamiento 60 s
+[postgres_B_Q1_WM64_c50_r2] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2928.528 s, RSS máx 1965.4 MiB, spill 
+== 15:50:10 variante 16 de 27
+[postgres_C_Q1_WM64_c1_r2] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c1_r2] enfriamiento 60 s
+[postgres_C_Q1_WM64_c1_r2] spill: 89 consultas en la ventana, QPS 0.2967, P99 4054.794 ms, throttling 344.661 s, RSS máx 301.7 MiB, spill true
+== 15:57:19 variante 17 de 27
+[postgres_C_Q1_WM64_c10_r2] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c10_r2] enfriamiento 60 s
+[postgres_C_Q1_WM64_c10_r2] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2360.781 s, RSS máx 973.3 MiB, spill 
+== 16:04:30 variante 18 de 27
+[postgres_C_Q1_WM64_c50_r2] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c50_r2] enfriamiento 60 s
+[postgres_C_Q1_WM64_c50_r2] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 3435.137 s, RSS máx 957.2 MiB, spill 
+== 16:12:09 variante 19 de 27
+[postgres_A_Q1_WM64_c1_r3] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c1_r3] enfriamiento 60 s
+[postgres_A_Q1_WM64_c1_r3] spill: 170 consultas en la ventana, QPS 0.5667, P99 1805.037 ms, throttling 0.0 s, RSS máx 290.4 MiB, spill true
+== 16:19:18 variante 20 de 27
+[postgres_A_Q1_WM64_c10_r3] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c10_r3] enfriamiento 60 s
+[postgres_A_Q1_WM64_c10_r3] spill: 289 consultas en la ventana, QPS 0.9633, P99 13176.261 ms, throttling 1320.526 s, RSS máx 1664.0 MiB, spill true
+== 16:26:32 variante 21 de 27
+[postgres_A_Q1_WM64_c50_r3] preparando motor y limpiando caché
+[postgres_A_Q1_WM64_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_WM64_c50_r3] enfriamiento 60 s
+[postgres_A_Q1_WM64_c50_r3] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 1487.007 s, RSS máx 3882.0 MiB, spill 
+== 16:33:42 variante 22 de 27
+[postgres_B_Q1_WM64_c1_r3] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c1_r3] enfriamiento 60 s
+[postgres_B_Q1_WM64_c1_r3] spill: 142 consultas en la ventana, QPS 0.4733, P99 2983.014 ms, throttling 90.682 s, RSS máx 297.9 MiB, spill true
+== 16:40:52 variante 23 de 27
+[postgres_B_Q1_WM64_c10_r3] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c10_r3] enfriamiento 60 s
+[postgres_B_Q1_WM64_c10_r3] spill: 124 consultas en la ventana, QPS 0.4133, P99 26423.926 ms, throttling 2097.261 s, RSS máx 1612.1 MiB, spill true
+== 16:48:05 variante 24 de 27
+[postgres_B_Q1_WM64_c50_r3] preparando motor y limpiando caché
+[postgres_B_Q1_WM64_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_WM64_c50_r3] enfriamiento 60 s
+[postgres_B_Q1_WM64_c50_r3] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2931.386 s, RSS máx 1967.2 MiB, spill 
+== 16:55:20 variante 25 de 27
+[postgres_C_Q1_WM64_c1_r3] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c1_r3] enfriamiento 60 s
+[postgres_C_Q1_WM64_c1_r3] spill: 87 consultas en la ventana, QPS 0.29, P99 4802.657 ms, throttling 335.087 s, RSS máx 288.0 MiB, spill true
+== 17:02:28 variante 26 de 27
+[postgres_C_Q1_WM64_c10_r3] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c10_r3] enfriamiento 60 s
+[postgres_C_Q1_WM64_c10_r3] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2370.866 s, RSS máx 974.9 MiB, spill 
+== 17:09:43 variante 27 de 27
+[postgres_C_Q1_WM64_c50_r3] preparando motor y limpiando caché
+[postgres_C_Q1_WM64_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_WM64_c50_r3] enfriamiento 60 s
+[postgres_C_Q1_WM64_c50_r3] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 3274.874 s, RSS máx 957.0 MiB, spill 
+Variantes completas: 27 de 27 corridas en results/variantes/mediciones.csv
