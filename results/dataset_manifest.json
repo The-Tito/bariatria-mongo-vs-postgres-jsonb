@@ -1,0 +1,82 @@
+{
+  "archivo": "data/visitas.ndjson.gz",
+  "sha256_sin_comprimir": "8d600ad26eefe3093344dc8e3637f81e0e86050dc6a74129676edae381440537",
+  "parametros": {
+    "semilla": 20261028,
+    "pacientes": 10000,
+    "visitas": 500000,
+    "fecha_fin_local": "2026-10-28",
+    "anios": 15,
+    "crecimiento_anual": 0.1,
+    "p_pliegues": 0.6,
+    "p_signos_vitales": 0.9,
+    "p_bioimpedancia": 0.5,
+    "p_sin_estatura": 0.02,
+    "p_cierre_automatico": 0.05,
+    "escala_seguimiento": 1.5873
+  },
+  "resultado": {
+    "visitas": 500000,
+    "pacientes_con_visitas": 10000,
+    "visitas_por_paciente": {
+      "min": 1,
+      "mediana": 44.0,
+      "max": 202,
+      "promedio": 50.0
+    },
+    "visitas_por_anio": {
+      "2011": 270,
+      "2012": 6839,
+      "2013": 11740,
+      "2014": 16038,
+      "2015": 19036,
+      "2016": 22656,
+      "2017": 25338,
+      "2018": 29342,
+      "2019": 31853,
+      "2020": 35326,
+      "2021": 40087,
+      "2022": 44923,
+      "2023": 48543,
+      "2024": 54310,
+      "2025": 59758,
+      "2026": 53941
+    },
+    "estudios_por_visita": {
+      "promedio": 3.0,
+      "distribucion": {
+        "1": 10100,
+        "2": 114359,
+        "3": 240685,
+        "4": 134856
+      }
+    },
+    "pct_visitas_con_estudio": {
+      "antropometria": 100.0,
+      "pliegues_cutaneos": 60.0,
+      "signos_vitales": 90.0,
+      "bioimpedancia": 50.0
+    },
+    "pct_glucosa_ge_100": 45.7,
+    "pct_sin_imc": 2.03,
+    "visitas_abiertas": 181,
+    "pct_cierre_automatico": 5.0,
+    "q2_visitas_cerradas_2026": 53760,
+    "bytes_json": {
+      "p50": 1012,
+      "p95": 1312,
+      "p99": 1416,
+      "max": 1521,
+      "promedio": 1012
+    },
+    "bytes_bson": {
+      "p50": 1016,
+      "p95": 1345,
+      "p99": 1460,
+      "max": 1568,
+      "promedio": 1018
+    },
+    "pct_bson_mayor_2kb": 0.0
+  },
+  "segundos": 30.2
+}
