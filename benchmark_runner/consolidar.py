@@ -26,6 +26,10 @@ CONCURRENCIAS = [1, 10, 50]
 MOTORES = ["mongo", "postgres"]
 KPIS = ["throughput_qps", "latency_p50_ms", "latency_p95_ms", "latency_p99_ms", "cpu_throttled_seconds",
         "max_rss_mb"]
+# Las latencias de una corrida con OOM o error salen de unas pocas consultas terminadas entre reinicios: no
+# representan a la celda. Se resumen solo con repeticiones completas; el QPS sí usa todas (~0 es el dato real)
+LATENCIAS = {"latency_p50_ms", "latency_p95_ms", "latency_p99_ms"}
+COMPLETAS = {"ok", "spill"}
 
 # Paleta categórica validada (dataviz: slots 1 y 2, CVD ΔE 24.7) y tinta de texto
 COLOR = {"mongo": "#2a78d6", "postgres": "#eb6834"}
@@ -73,8 +77,10 @@ def consolidar(carpeta):
     for (motor, perfil, qid, conc), reps in sorted(celdas.items(), key=lambda x: (
             x[0][2], MOTORES.index(x[0][0]), PERFILES.index(x[0][1]), x[0][3])):
         c = {"engine": motor, "profile": perfil, "query_id": qid, "concurrency": conc, "repeticiones": len(reps)}
+        completas = [r for r in reps if r["status"] in COMPLETAS]
+        c["repeticiones_completas"] = len(completas)
         for k in KPIS:
-            med, mn, mx = resumen([numero(r[k]) for r in reps])
+            med, mn, mx = resumen([numero(r[k]) for r in (completas if k in LATENCIAS else reps)])
             c[f"{k}_mediana"], c[f"{k}_min"], c[f"{k}_max"] = med, mn, mx
         estados = {}
         for r in reps:
@@ -95,6 +101,8 @@ def consolidar(carpeta):
             g0, g1 = m["contadores_inicio"]["cgroup"], m["contadores_fin"]["cgroup"]
             if g1 and "nr_periods" in g0 and "nr_periods" in g1 and g1["nr_periods"] > g0["nr_periods"]:
                 fraccion.append((g1["nr_throttled"] - g0["nr_throttled"]) / (g1["nr_periods"] - g0["nr_periods"]))
+            if r["status"] not in COMPLETAS:  # M3 solo con repeticiones completas, igual que las latencias
+                continue
             if ok and "usage_usec" in g0 and "usage_usec" in g1:
                 cpu_s = (g1["usage_usec"] - g0["usage_usec"]) / 1e6
                 cpu_1000.append(cpu_s * 1000 / (ok * docs[base] / 1000))
@@ -126,7 +134,8 @@ def fmt(v, dec=1):
 
 def escribir_markdown(celdas, ruta, docs):
     lineas = [
-        "Mediana de las repeticiones; entre paréntesis, mínimo–máximo. Latencias en ms. "
+        "Mediana de las repeticiones; entre paréntesis, mínimo–máximo. Latencias en ms, solo de repeticiones "
+        "completas (`ok` o `spill`). "
         f"M3: Q1 lee {docs['Q1']:,} documentos por consulta y Q2 {docs['Q2']:,}.", "",
         "| Motor | Perfil | Consulta | Clientes | Estado | QPS | P95 | P99 | Throttling (s) | RSS máx (MiB) "
         "| Spill | Muestras mín. | CPU ms / 1k docs | RSS MiB / 1k docs |",
