@@ -193,6 +193,45 @@ def series(contenedor_id, ini, fin):
     return datos
 
 
+def lineas_spill_en_log(motor, texto, ini, fin):
+    """Líneas del log del motor que registran volcado a disco dentro de la ventana [ini, fin) (epoch).
+
+    PostgreSQL escribe «temporary file» por cada archivo temporal (log_temp_files = 0); MongoDB registra
+    "usedDisk":true en sus operaciones lentas. A diferencia de los contadores, el log no se reinicia cuando
+    Postgres se recupera de un OOM.
+    """
+    from datetime import datetime, timezone
+    n = 0
+    for linea in texto.splitlines():
+        try:
+            if motor == "postgres" and "temporary file" in linea:
+                t = datetime.strptime(linea[:23], "%Y-%m-%d %H:%M:%S.%f").replace(tzinfo=timezone.utc).timestamp()
+            elif motor == "mongo" and '"usedDisk":true' in linea:
+                t = datetime.fromisoformat(json.loads(linea)["t"]["$date"].replace("Z", "+00:00")).timestamp()
+            else:
+                continue
+        except (ValueError, KeyError):
+            continue
+        n += ini <= t < fin
+    return n
+
+
+def evaluar_spill(motor, meta, texto_log):
+    """True si hay evidencia de volcado (contadores o log); False solo con contadores válidos y sin OOM."""
+    ci, cf = meta["contadores_inicio"], meta["contadores_fin"]
+    f = meta["fases"]
+    claves = ("sort_spillToDisk", "group_spills") if motor == "mongo" else ("temp_files",)
+    # Un OOM reinicia Postgres y con él sus estadísticas: los contadores dejan de ser comparables
+    contadores_validos = "spill" in ci and "spill" in cf and meta.get("oom_kill_eventos", 0) == 0
+    por_contadores = contadores_validos and any(cf["spill"][k] > ci["spill"][k] for k in claves)
+    en_log = lineas_spill_en_log(motor, texto_log, f["ventana_inicio"], f["ventana_fin"])
+    meta["spill_evidencia"] = {"contadores_validos": contadores_validos, "por_contadores": por_contadores,
+                               "lineas_log_en_ventana": en_log}
+    if por_contadores or en_log:
+        return True
+    return False if contadores_validos else None
+
+
 def guardar_metricas(carpeta, meta, contenedor_id):
     """Escribe metricas.csv.gz con las series del contenedor y devuelve el RSS máximo de la ventana (MiB)."""
     f = meta["fases"]
@@ -225,7 +264,7 @@ def escribir_fila(csv_path, fila):
 
 
 def recalcular(carpeta):
-    """Rehace las series de cAdvisor y max_rss_mb de una corrida hecha antes de filtrar por ID de contenedor.
+    """Rehace las series de cAdvisor, max_rss_mb y disk_spill de una corrida con las reglas vigentes.
 
     Identifica el contenedor de la corrida por su hora de arranque (container_start_time_seconds de cAdvisor
     frente a StartedAt de docker inspect, guardado en meta.json).
@@ -239,14 +278,21 @@ def recalcular(carpeta):
                           start=meta["fases"]["preparacion_fin"], end=meta["fases"]["enfriamiento_fin"], step="5s")
         mejor = min(candidatos, key=lambda s: abs(float(s["values"][0][1]) - inicio))
         meta["contenedor_inicio"]["id"] = mejor["metric"]["id"].removeprefix("/docker/")
-    anterior = meta["fila_csv"]["max_rss_mb"]
+    anterior = {k: meta["fila_csv"][k] for k in ("max_rss_mb", "disk_spill", "status")}
     max_rss = guardar_metricas(carpeta, meta, meta["contenedor_inicio"]["id"])
     meta["fila_csv"]["max_rss_mb"] = max_rss if max_rss is not None else ""
-    meta["recalculado"] = {"fecha": time.time(), "max_rss_mb_anterior": anterior,
-                           "motivo": "series de cAdvisor mezcladas con las del contenedor anterior (filtro por nombre)"}
+    with gzip.open(carpeta / "motor.log.gz", "rt") as f:
+        spill = evaluar_spill(meta["engine"], meta, f.read())
+    fila = meta["fila_csv"]
+    fila["disk_spill"] = {True: "true", False: "false", None: ""}[spill]
+    if fila["status"] in ("ok", "spill"):
+        fila["status"] = "spill" if spill else "ok"
+    meta.setdefault("recalculos", []).append({
+        "fecha": time.time(), "anterior": anterior,
+        "motivo": "series de cAdvisor filtradas por ID de contenedor; spill con el log como respaldo"})
     (carpeta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
     escribir_fila(carpeta.parent.parent / "mediciones.csv", meta["fila_csv"])
-    print(f"[{meta['id']}] max_rss_mb {anterior} -> {meta['fila_csv']['max_rss_mb']}")
+    print(f"[{meta['id']}] {anterior} -> " + str({k: fila[k] for k in anterior}))
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -360,12 +406,6 @@ def correr(a):
     throttled = None
     if "throttled_usec" in ci["cgroup"] and "throttled_usec" in cf["cgroup"]:
         throttled = (cf["cgroup"]["throttled_usec"] - ci["cgroup"]["throttled_usec"]) / 1e6
-    # Sin las dos lecturas (p. ej., el motor estaba en recuperación tras un OOM) no se puede afirmar nada:
-    # disk_spill queda vacío en lugar de false. Tras una caída, Postgres además reinicia sus estadísticas
-    spill = None
-    if "spill" in ci and "spill" in cf:
-        claves = ("sort_spillToDisk", "group_spills") if a.engine == "mongo" else ("temp_files",)
-        spill = any(cf["spill"][k] > ci["spill"][k] for k in claves)
     oom_kills = cf["cgroup"].get("oom_kill", 0) - ci["cgroup"].get("oom_kill", 0) if cf["cgroup"] else 0
     oom = meta["contenedor_fin"]["oom_killed"] or oom_kills > 0
     meta["oom_kill_eventos"] = oom_kills
@@ -382,6 +422,8 @@ def correr(a):
     log = subprocess.run(["docker", "logs", "--since", desde, CONTENEDOR[a.engine]], capture_output=True, text=True)
     with gzip.open(carpeta / "motor.log.gz", "wt") as f:
         f.write(log.stdout + log.stderr)
+    # Spill: contadores del motor y, como respaldo, el log (sin evidencia y con contadores inválidos: vacío)
+    spill = evaluar_spill(a.engine, meta, log.stdout + log.stderr)
 
     if oom:
         status = "oom"
