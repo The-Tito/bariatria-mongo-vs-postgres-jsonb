@@ -1,0 +1,90 @@
+{
+  "Q1_allowDiskUse_false": {
+    "etapas": [
+      {
+        "etapa": "$group",
+        "usedDisk": false,
+        "spills": 0,
+        "maxAccumulatorMemoryUsageBytes": {
+          "prescripciones": 18432,
+          "dosis_diaria_total_mg": 18432,
+          "dosis_diaria_prom_mg": 14976
+        }
+      },
+      {
+        "etapa": "$sort",
+        "usedDisk": false,
+        "spills": 0,
+        "totalDataSizeSortedBytesEstimate": 104288
+      },
+      {
+        "etapa": "$group"
+      },
+      {
+        "etapa": "$sort"
+      }
+    ]
+  },
+  "Q1_allowDiskUse_true": {
+    "etapas": [
+      {
+        "etapa": "$group",
+        "usedDisk": false,
+        "spills": 0,
+        "maxAccumulatorMemoryUsageBytes": {
+          "prescripciones": 18432,
+          "dosis_diaria_total_mg": 18432,
+          "dosis_diaria_prom_mg": 14976
+        }
+      },
+      {
+        "etapa": "$sort",
+        "usedDisk": false,
+        "spills": 0,
+        "totalDataSizeSortedBytesEstimate": 104288
+      },
+      {
+        "etapa": "$group"
+      },
+      {
+        "etapa": "$sort"
+      }
+    ]
+  },
+  "Q2_allowDiskUse_false": {
+    "etapas": [
+      {
+        "etapa": "SORT",
+        "memLimit": 104857600
+      },
+      {
+        "etapa": "SORT",
+        "usedDisk": false,
+        "spills": 0,
+        "totalDataSizeSorted": 1380611,
+        "memLimit": 104857600
+      },
+      {
+        "etapa": "$sort"
+      }
+    ]
+  },
+  "Q2_allowDiskUse_true": {
+    "etapas": [
+      {
+        "etapa": "SORT",
+        "memLimit": 104857600
+      },
+      {
+        "etapa": "SORT",
+        "usedDisk": false,
+        "spills": 0,
+        "totalDataSizeSorted": 1380611,
+        "memLimit": 104857600
+      },
+      {
+        "etapa": "$sort"
+      }
+    ]
+  }
+}

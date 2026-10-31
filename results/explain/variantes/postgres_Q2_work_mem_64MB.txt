@@ -1,0 +1,19 @@
+Limit  (cost=13782.69..13783.32 rows=250 width=96) (actual time=86.507..86.595 rows=1000.00 loops=1)
+  Output: id, ((data ->> 'paciente_id'::text)), ((data ->> 'fecha'::text)), ((((data -> 'resumen'::text) ->> 'imc'::text))::double precision), ((((data -> 'resumen'::text) ->> 'peso_kg'::text))::double precision)
+  Buffers: shared hit=13357
+  ->  Sort  (cost=13782.69..13783.32 rows=250 width=96) (actual time=86.505..86.551 rows=1000.00 loops=1)
+        Output: id, ((data ->> 'paciente_id'::text)), ((data ->> 'fecha'::text)), ((((data -> 'resumen'::text) ->> 'imc'::text))::double precision), ((((data -> 'resumen'::text) ->> 'peso_kg'::text))::double precision)
+        Sort Key: ((((visitas.data -> 'resumen'::text) ->> 'imc'::text))::double precision) DESC NULLS LAST, visitas.id
+        Sort Method: top-N heapsort  Memory: 275kB
+        Buffers: shared hit=13357
+        ->  Index Scan using idx_visitas_fecha on public.visitas  (cost=0.42..13772.74 rows=250 width=96) (actual time=0.012..81.915 rows=53760.00 loops=1)
+              Output: id, (data ->> 'paciente_id'::text), (data ->> 'fecha'::text), (((data -> 'resumen'::text) ->> 'imc'::text))::double precision, (((data -> 'resumen'::text) ->> 'peso_kg'::text))::double precision
+              Index Cond: ((((visitas.data ->> 'fecha'::text))::text >= '2026-01-01T06:00:00.000Z'::text) AND (((visitas.data ->> 'fecha'::text))::text < '2027-01-01T06:00:00.000Z'::text))
+              Filter: ((visitas.data ->> 'estado'::text) = 'cerrada'::text)
+              Rows Removed by Filter: 181
+              Index Searches: 1
+              Buffers: shared hit=13351
+Planning:
+  Buffers: shared hit=165
+Planning Time: 0.254 ms
+Execution Time: 86.647 ms
