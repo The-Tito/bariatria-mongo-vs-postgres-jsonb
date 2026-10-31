@@ -1,0 +1,58 @@
+GroupAggregate  (cost=279364.35..3786345.41 rows=16506303 width=60) (actual time=422.708..2068.057 rows=144.00 loops=1)
+  Output: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer), (((med.value ->> 'nombre'::text))::text), count(*), sum((((med.value ->> 'dosis_mg'::text))::double precision * (((med.value ->> 'tomas_por_dia'::text))::integer)::double precision)), avg((((med.value ->> 'dosis_mg'::text))::double precision * (((med.value ->> 'tomas_por_dia'::text))::integer)::double precision))
+  Group Key: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer), (((med.value ->> 'nombre'::text))::text)
+  Buffers: shared hit=359 read=112262, temp read=99234 written=99245
+  ->  Incremental Sort  (cost=279364.35..2424575.41 rows=16506303 width=68) (actual time=422.671..1827.208 rows=783966.00 loops=1)
+        Output: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer), (((med.value ->> 'nombre'::text))::text), med.value
+        Sort Key: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer), (((med.value ->> 'nombre'::text))::text) COLLATE "C"
+        Presorted Key: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)
+        Full-sort Groups: 16  Sort Method: quicksort  Average Memory: 36kB  Peak Memory: 36kB
+        Pre-sorted Groups: 16  Sort Method: quicksort  Average Memory: 10745kB  Peak Memory: 20400kB
+        Buffers: shared hit=359 read=112262, temp read=99234 written=99245
+        ->  Nested Loop  (cost=279360.49..1791921.31 rows=16506303 width=68) (actual time=422.106..1684.781 rows=783966.00 loops=1)
+              Output: (EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer, (med.value ->> 'nombre'::text), med.value
+              Buffers: shared hit=356 read=112262, temp read=99234 written=99245
+              ->  Gather Merge  (cost=279360.49..337615.97 rows=500191 width=1608) (actual time=421.747..667.400 rows=500000.00 loops=1)
+                    Output: visitas.data
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=356 read=112262, temp read=99234 written=99245
+                    ->  Sort  (cost=278360.47..278881.50 rows=208413 width=1608) (actual time=411.108..463.406 rows=166666.67 loops=3)
+                          Output: visitas.data, ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)
+                          Sort Key: ((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)
+                          Sort Method: external merge  Disk: 235440kB
+                          Buffers: shared hit=356 read=112262, temp read=99234 written=99245
+                          Worker 0:  actual time=403.981..462.412 rows=176891.00 loops=1
+                            Sort Method: external merge  Disk: 280696kB
+                            JIT:
+                              Functions: 2
+                              Options: Inlining true, Optimization true, Expressions true, Deforming true
+                              Timing: Generation 0.116 ms (Deform 0.022 ms), Inlining 36.031 ms, Optimization 6.832 ms, Emission 4.006 ms, Total 46.985 ms
+                            Buffers: shared hit=125 read=39691, temp read=35087 written=35091
+                          Worker 1:  actual time=407.922..467.993 rows=174939.00 loops=1
+                            Sort Method: external merge  Disk: 277736kB
+                            JIT:
+                              Functions: 2
+                              Options: Inlining true, Optimization true, Expressions true, Deforming true
+                              Timing: Generation 0.113 ms (Deform 0.025 ms), Inlining 36.257 ms, Optimization 6.603 ms, Emission 4.006 ms, Total 46.979 ms
+                            Buffers: shared hit=126 read=39261, temp read=34717 written=34721
+                          ->  Parallel Seq Scan on public.visitas  (cost=0.00..114628.13 rows=208413 width=1608) (actual time=64.965..207.402 rows=166666.67 loops=3)
+                                Output: visitas.data, (EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer
+                                Buffers: shared hit=282 read=112262
+                                Worker 0:  actual time=46.987..195.498 rows=176891.00 loops=1
+                                  Buffers: shared hit=88 read=39691
+                                Worker 1:  actual time=46.973..195.369 rows=174939.00 loops=1
+                                  Buffers: shared hit=89 read=39261
+              ->  Function Scan on pg_catalog.jsonb_array_elements med  (cost=0.01..2.00 rows=33 width=32) (actual time=0.001..0.001 rows=1.57 loops=500000)
+                    Output: med.value
+                    Function Call: jsonb_array_elements((visitas.data -> 'medicamentos'::text))
+                    Filter: (((med.value ->> 'duracion_dias'::text))::integer >= 60)
+                    Rows Removed by Filter: 1
+Planning:
+  Buffers: shared hit=244
+Planning Time: 0.247 ms
+JIT:
+  Functions: 17
+  Options: Inlining true, Optimization true, Expressions true, Deforming true
+  Timing: Generation 0.691 ms (Deform 0.142 ms), Inlining 115.412 ms, Optimization 45.260 ms, Emission 33.992 ms, Total 195.355 ms
+Execution Time: 2088.141 ms

@@ -1,0 +1,14 @@
+[
+  { "$unwind": "$medicamentos" },
+  { "$match": { "medicamentos.duracion_dias": { "$gte": 60 } } },
+  { "$group": {
+      "_id": {
+        "anio": { "$year": { "date": "$fecha", "timezone": "-06:00" } },
+        "medicamento": "$medicamentos.nombre"
+      },
+      "prescripciones": { "$sum": 1 },
+      "dosis_diaria_total_mg": { "$sum": { "$multiply": ["$medicamentos.dosis_mg", "$medicamentos.tomas_por_dia"] } },
+      "dosis_diaria_prom_mg": { "$avg": { "$multiply": ["$medicamentos.dosis_mg", "$medicamentos.tomas_por_dia"] } }
+  } },
+  { "$sort": { "_id.anio": 1, "_id.medicamento": 1 } }
+]

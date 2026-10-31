@@ -1,0 +1,426 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Aggregate",
+      "Strategy": "Sorted",
+      "Partial Mode": "Simple",
+      "Parallel Aware": false,
+      "Async Capable": false,
+      "Startup Cost": 424684.35,
+      "Total Cost": 3931665.41,
+      "Plan Rows": 16506303,
+      "Plan Width": 60,
+      "Actual Startup Time": 1455.423,
+      "Actual Total Time": 3008.285,
+      "Actual Rows": 144.0,
+      "Actual Loops": 1,
+      "Disabled": false,
+      "Output": [
+        "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)",
+        "(((med.value ->> 'nombre'::text))::text)",
+        "count(*)",
+        "sum((((med.value ->> 'dosis_mg'::text))::double precision * (((med.value ->> 'tomas_por_dia'::text))::integer)::double precision))",
+        "avg((((med.value ->> 'dosis_mg'::text))::double precision * (((med.value ->> 'tomas_por_dia'::text))::integer)::double precision))"
+      ],
+      "Group Key": [
+        "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)",
+        "(((med.value ->> 'nombre'::text))::text)"
+      ],
+      "Shared Hit Blocks": 638,
+      "Shared Read Blocks": 111980,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 215132,
+      "Temp Written Blocks": 215365,
+      "Plans": [
+        {
+          "Node Type": "Incremental Sort",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 424684.35,
+          "Total Cost": 2569895.41,
+          "Plan Rows": 16506303,
+          "Plan Width": 68,
+          "Actual Startup Time": 1455.399,
+          "Actual Total Time": 2775.586,
+          "Actual Rows": 783966.0,
+          "Actual Loops": 1,
+          "Disabled": false,
+          "Output": [
+            "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)",
+            "(((med.value ->> 'nombre'::text))::text)",
+            "med.value"
+          ],
+          "Sort Key": [
+            "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)",
+            "(((med.value ->> 'nombre'::text))::text) COLLATE \"C\""
+          ],
+          "Presorted Key": [
+            "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)"
+          ],
+          "Full-sort Groups": {
+            "Group Count": 16,
+            "Sort Methods Used": [
+              "quicksort"
+            ],
+            "Sort Space Memory": {
+              "Average Sort Space Used": 36,
+              "Peak Sort Space Used": 36
+            }
+          },
+          "Pre-sorted Groups": {
+            "Group Count": 16,
+            "Sort Methods Used": [
+              "quicksort",
+              "external merge"
+            ],
+            "Sort Space Memory": {
+              "Average Sort Space Used": 376,
+              "Peak Sort Space Used": 3726
+            },
+            "Sort Space Disk": {
+              "Average Sort Space Used": 8425,
+              "Peak Sort Space Used": 16744
+            }
+          },
+          "Shared Hit Blocks": 638,
+          "Shared Read Blocks": 111980,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 215132,
+          "Temp Written Blocks": 215365,
+          "Plans": [
+            {
+              "Node Type": "Nested Loop",
+              "Parent Relationship": "Outer",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Join Type": "Inner",
+              "Startup Cost": 424680.49,
+              "Total Cost": 1937241.31,
+              "Plan Rows": 16506303,
+              "Plan Width": 68,
+              "Actual Startup Time": 1454.834,
+              "Actual Total Time": 2608.267,
+              "Actual Rows": 783966.0,
+              "Actual Loops": 1,
+              "Disabled": false,
+              "Output": [
+                "(EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer",
+                "(med.value ->> 'nombre'::text)",
+                "med.value"
+              ],
+              "Inner Unique": false,
+              "Shared Hit Blocks": 638,
+              "Shared Read Blocks": 111980,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 198484,
+              "Temp Written Blocks": 198686,
+              "Plans": [
+                {
+                  "Node Type": "Gather Merge",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 424680.49,
+                  "Total Cost": 482935.97,
+                  "Plan Rows": 500191,
+                  "Plan Width": 1608,
+                  "Actual Startup Time": 1454.8,
+                  "Actual Total Time": 1636.677,
+                  "Actual Rows": 500000.0,
+                  "Actual Loops": 1,
+                  "Disabled": false,
+                  "Output": [
+                    "visitas.data"
+                  ],
+                  "Workers Planned": 2,
+                  "Workers Launched": 2,
+                  "Shared Hit Blocks": 638,
+                  "Shared Read Blocks": 111980,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 198484,
+                  "Temp Written Blocks": 198686,
+                  "Plans": [
+                    {
+                      "Node Type": "Sort",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Startup Cost": 423680.47,
+                      "Total Cost": 424201.5,
+                      "Plan Rows": 208413,
+                      "Plan Width": 1608,
+                      "Actual Startup Time": 1445.934,
+                      "Actual Total Time": 1479.652,
+                      "Actual Rows": 166666.67,
+                      "Actual Loops": 3,
+                      "Disabled": false,
+                      "Output": [
+                        "visitas.data",
+                        "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)"
+                      ],
+                      "Sort Key": [
+                        "((EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer)"
+                      ],
+                      "Sort Method": "external merge",
+                      "Sort Space Used": 247120,
+                      "Sort Space Type": "Disk",
+                      "Shared Hit Blocks": 638,
+                      "Shared Read Blocks": 111980,
+                      "Shared Dirtied Blocks": 0,
+                      "Shared Written Blocks": 0,
+                      "Local Hit Blocks": 0,
+                      "Local Read Blocks": 0,
+                      "Local Dirtied Blocks": 0,
+                      "Local Written Blocks": 0,
+                      "Temp Read Blocks": 198484,
+                      "Temp Written Blocks": 198686,
+                      "Workers": [
+                        {
+                          "Worker Number": 0,
+                          "Actual Startup Time": 1445.319,
+                          "Actual Total Time": 1481.362,
+                          "Actual Rows": 171941.0,
+                          "Actual Loops": 1,
+                          "Sort Method": "external merge",
+                          "Sort Space Used": 273080,
+                          "Sort Space Type": "Disk",
+                          "JIT": {
+                            "Functions": 2,
+                            "Options": {
+                              "Inlining": true,
+                              "Optimization": true,
+                              "Expressions": true,
+                              "Deforming": true
+                            },
+                            "Timing": {
+                              "Generation": {
+                                "Deform": 0.02,
+                                "Total": 0.111
+                              },
+                              "Inlining": 36.328,
+                              "Optimization": 7.006,
+                              "Emission": 3.454,
+                              "Total": 46.899
+                            }
+                          },
+                          "Shared Hit Blocks": 286,
+                          "Shared Read Blocks": 38460,
+                          "Shared Dirtied Blocks": 0,
+                          "Shared Written Blocks": 0,
+                          "Local Hit Blocks": 0,
+                          "Local Read Blocks": 0,
+                          "Local Dirtied Blocks": 0,
+                          "Local Written Blocks": 0,
+                          "Temp Read Blocks": 68265,
+                          "Temp Written Blocks": 68334
+                        },
+                        {
+                          "Worker Number": 1,
+                          "Actual Startup Time": 1446.074,
+                          "Actual Total Time": 1482.419,
+                          "Actual Rows": 172417.0,
+                          "Actual Loops": 1,
+                          "Sort Method": "external merge",
+                          "Sort Space Used": 273792,
+                          "Sort Space Type": "Disk",
+                          "JIT": {
+                            "Functions": 2,
+                            "Options": {
+                              "Inlining": true,
+                              "Optimization": true,
+                              "Expressions": true,
+                              "Deforming": true
+                            },
+                            "Timing": {
+                              "Generation": {
+                                "Deform": 0.018,
+                                "Total": 0.093
+                              },
+                              "Inlining": 35.352,
+                              "Optimization": 6.822,
+                              "Emission": 3.374,
+                              "Total": 45.64
+                            }
+                          },
+                          "Shared Hit Blocks": 291,
+                          "Shared Read Blocks": 38536,
+                          "Shared Dirtied Blocks": 0,
+                          "Shared Written Blocks": 0,
+                          "Local Hit Blocks": 0,
+                          "Local Read Blocks": 0,
+                          "Local Dirtied Blocks": 0,
+                          "Local Written Blocks": 0,
+                          "Temp Read Blocks": 68442,
+                          "Temp Written Blocks": 68512
+                        }
+                      ],
+                      "Plans": [
+                        {
+                          "Node Type": "Seq Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": true,
+                          "Async Capable": false,
+                          "Relation Name": "visitas",
+                          "Schema": "public",
+                          "Alias": "visitas",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 114628.13,
+                          "Plan Rows": 208413,
+                          "Plan Width": 1608,
+                          "Actual Startup Time": 54.505,
+                          "Actual Total Time": 186.983,
+                          "Actual Rows": 166666.67,
+                          "Actual Loops": 3,
+                          "Disabled": false,
+                          "Output": [
+                            "visitas.data",
+                            "(EXTRACT(year FROM (((visitas.data ->> 'fecha'::text))::timestamp with time zone AT TIME ZONE '-06:00:00'::interval)))::integer"
+                          ],
+                          "Shared Hit Blocks": 564,
+                          "Shared Read Blocks": 111980,
+                          "Shared Dirtied Blocks": 0,
+                          "Shared Written Blocks": 0,
+                          "Local Hit Blocks": 0,
+                          "Local Read Blocks": 0,
+                          "Local Dirtied Blocks": 0,
+                          "Local Written Blocks": 0,
+                          "Temp Read Blocks": 0,
+                          "Temp Written Blocks": 0,
+                          "Workers": [
+                            {
+                              "Worker Number": 0,
+                              "Actual Startup Time": 46.906,
+                              "Actual Total Time": 183.044,
+                              "Actual Rows": 171941.0,
+                              "Actual Loops": 1,
+                              "Shared Hit Blocks": 249,
+                              "Shared Read Blocks": 38460,
+                              "Shared Dirtied Blocks": 0,
+                              "Shared Written Blocks": 0,
+                              "Local Hit Blocks": 0,
+                              "Local Read Blocks": 0,
+                              "Local Dirtied Blocks": 0,
+                              "Local Written Blocks": 0,
+                              "Temp Read Blocks": 0,
+                              "Temp Written Blocks": 0
+                            },
+                            {
+                              "Worker Number": 1,
+                              "Actual Startup Time": 45.668,
+                              "Actual Total Time": 181.448,
+                              "Actual Rows": 172417.0,
+                              "Actual Loops": 1,
+                              "Shared Hit Blocks": 254,
+                              "Shared Read Blocks": 38536,
+                              "Shared Dirtied Blocks": 0,
+                              "Shared Written Blocks": 0,
+                              "Local Hit Blocks": 0,
+                              "Local Read Blocks": 0,
+                              "Local Dirtied Blocks": 0,
+                              "Local Written Blocks": 0,
+                              "Temp Read Blocks": 0,
+                              "Temp Written Blocks": 0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Function Scan",
+                  "Parent Relationship": "Inner",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Function Name": "jsonb_array_elements",
+                  "Schema": "pg_catalog",
+                  "Alias": "med",
+                  "Startup Cost": 0.01,
+                  "Total Cost": 2.0,
+                  "Plan Rows": 33,
+                  "Plan Width": 32,
+                  "Actual Startup Time": 0.001,
+                  "Actual Total Time": 0.001,
+                  "Actual Rows": 1.57,
+                  "Actual Loops": 500000,
+                  "Disabled": false,
+                  "Output": [
+                    "med.value"
+                  ],
+                  "Function Call": "jsonb_array_elements((visitas.data -> 'medicamentos'::text))",
+                  "Filter": "(((med.value ->> 'duracion_dias'::text))::integer >= 60)",
+                  "Rows Removed by Filter": 1,
+                  "Shared Hit Blocks": 0,
+                  "Shared Read Blocks": 0,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "Planning": {
+      "Shared Hit Blocks": 0,
+      "Shared Read Blocks": 0,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0
+    },
+    "Planning Time": 0.086,
+    "Triggers": [],
+    "JIT": {
+      "Functions": 17,
+      "Options": {
+        "Inlining": true,
+        "Optimization": true,
+        "Expressions": true,
+        "Deforming": true
+      },
+      "Timing": {
+        "Generation": {
+          "Deform": 0.157,
+          "Total": 0.721
+        },
+        "Inlining": 81.783,
+        "Optimization": 47.469,
+        "Emission": 33.966,
+        "Total": 163.94
+      }
+    },
+    "Execution Time": 3020.062
+  }
+]

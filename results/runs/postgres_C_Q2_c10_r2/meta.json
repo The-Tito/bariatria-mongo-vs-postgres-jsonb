@@ -1,0 +1,143 @@
+{
+  "id": "postgres_C_Q2_c10_r2",
+  "engine": "postgres",
+  "profile": "PROFILE_C_SEVERE",
+  "query_id": "Q2",
+  "consulta": "Q2",
+  "variante_work_mem": null,
+  "concurrency": 10,
+  "run_number": 2,
+  "carga": "lazo cerrado",
+  "duraciones_s": {
+    "calentamiento": 60,
+    "medicion": 300,
+    "enfriamiento": 60
+  },
+  "timeout_consulta_s": 300,
+  "fases": {
+    "preparacion_inicio": 1793460318.643571,
+    "preparacion_fin": 1793460325.4829261,
+    "carga_inicio": 1793460326.641022,
+    "ventana_inicio": 1793460386.641022,
+    "ventana_fin": 1793460686.641022,
+    "carga_fin": 1793460687.711991,
+    "enfriamiento_fin": 1793460747.722233
+  },
+  "contenedor_inicio": {
+    "id": "807de83477aa226e799cd9a3cf0f26dd374a8512e415136051b8a52edb7f223e",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T15:25:19.577620918Z"
+  },
+  "config_motor": {
+    "max_connections": "100",
+    "max_parallel_workers": "8",
+    "max_parallel_workers_per_gather": "2",
+    "server_version": "18.4 (Debian 18.4-1.pgdg13+1)",
+    "shared_buffers": "16384 8kB",
+    "temp_file_limit": "-1 kB",
+    "work_mem": "4096 kB"
+  },
+  "contadores_inicio": {
+    "t": 1793460386.646306,
+    "cgroup": {
+      "usage_usec": 60519019,
+      "user_usec": 59631216,
+      "system_usec": 887802,
+      "nice_usec": 0,
+      "nr_periods": 617,
+      "nr_throttled": 604,
+      "throttled_usec": 540646528,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0,
+      "sock_throttled": 0
+    },
+    "spill": {
+      "temp_files": 0,
+      "temp_bytes": 0
+    }
+  },
+  "contadores_fin": {
+    "t": 1793460686.6459908,
+    "cgroup": {
+      "usage_usec": 360560749,
+      "user_usec": 357896638,
+      "system_usec": 2664111,
+      "nice_usec": 0,
+      "nr_periods": 3617,
+      "nr_throttled": 3604,
+      "throttled_usec": 3236350735,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0,
+      "sock_throttled": 0
+    },
+    "spill": {
+      "temp_files": 0,
+      "temp_bytes": 0
+    }
+  },
+  "disco_host": {
+    "min_libre_bytes": 62565822464,
+    "abortado": false
+  },
+  "contenedor_fin": {
+    "id": "807de83477aa226e799cd9a3cf0f26dd374a8512e415136051b8a52edb7f223e",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T15:25:19.577620918Z"
+  },
+  "consultas": {
+    "total": 2043,
+    "en_ventana": 1704,
+    "exitosas_en_ventana": 1704,
+    "fallidas_total": 0,
+    "errores": {}
+  },
+  "oom_kill_eventos": 0,
+  "max_working_set_mb": 174.6,
+  "spill_evidencia": {
+    "contadores_validos": true,
+    "por_contadores": false,
+    "lineas_log_en_ventana": 0
+  },
+  "fila_csv": {
+    "timestamp_epoch": 1793460386,
+    "engine": "postgres",
+    "profile": "PROFILE_C_SEVERE",
+    "query_id": "Q2",
+    "concurrency": 10,
+    "run_number": 2,
+    "throughput_qps": 5.68,
+    "latency_p50_ms": 1788.555,
+    "latency_p95_ms": 2001.141,
+    "latency_p99_ms": 2108.866,
+    "cpu_throttled_seconds": 2695.704,
+    "max_rss_mb": 30.5,
+    "disk_spill": "false",
+    "status": "ok"
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "explainVersion": "1",
+  "stages": [
+    {
+      "$cursor": {
+        "queryPlanner": {
+          "namespace": "bariatria.visitas",
+          "parsedQuery": {},
+          "indexFilterSet": false,
+          "queryHash": "B630206A",
+          "planCacheShapeHash": "B630206A",
+          "planCacheKey": "E796CBC2",
+          "optimizationTimeMillis": 0,
+          "maxIndexedOrSolutionsReached": false,
+          "maxIndexedAndSolutionsReached": false,
+          "maxScansToExplodeReached": false,
+          "prunedSimilarIndexes": false,
+          "winningPlan": {
+            "isCached": false,
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "fecha": 1,
+              "medicamentos": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "direction": "forward"
+            }
+          },
+          "rejectedPlans": []
+        },
+        "executionStats": {
+          "executionSuccess": true,
+          "nReturned": 500000,
+          "executionTimeMillis": 931,
+          "totalKeysExamined": 0,
+          "totalDocsExamined": 500000,
+          "executionStages": {
+            "isCached": false,
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 500000,
+            "executionTimeMillisEstimate": 37,
+            "works": 500001,
+            "advanced": 500000,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 125,
+            "restoreState": 125,
+            "isEOF": 1,
+            "transformBy": {
+              "fecha": 1,
+              "medicamentos": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "nReturned": 500000,
+              "executionTimeMillisEstimate": 14,
+              "works": 500001,
+              "advanced": 500000,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 125,
+              "restoreState": 125,
+              "isEOF": 1,
+              "direction": "forward",
+              "docsExamined": 500000
+            }
+          }
+        }
+      },
+      "nReturned": 500000,
+      "executionTimeMillisEstimate": 313
+    },
+    {
+      "$unwind": {
+        "path": "$medicamentos"
+      },
+      "nReturned": 1494875,
+      "executionTimeMillisEstimate": 416
+    },
+    {
+      "$match": {
+        "medicamentos.duracion_dias": {
+          "$gte": 60
+        }
+      },
+      "nReturned": 783966,
+      "executionTimeMillisEstimate": 673
+    },
+    {
+      "$group": {
+        "_id": {
+          "anio": {
+            "$year": {
+              "date": "$fecha",
+              "timezone": {
+                "$const": "-06:00"
+              }
+            }
+          },
+          "medicamento": "$medicamentos.nombre"
+        },
+        "prescripciones": {
+          "$sum": {
+            "$const": 1
+          }
+        },
+        "dosis_diaria_total_mg": {
+          "$sum": {
+            "$multiply": [
+              "$medicamentos.dosis_mg",
+              "$medicamentos.tomas_por_dia"
+            ]
+          }
+        },
+        "dosis_diaria_prom_mg": {
+          "$avg": {
+            "$multiply": [
+              "$medicamentos.dosis_mg",
+              "$medicamentos.tomas_por_dia"
+            ]
+          }
+        }
+      },
+      "maxAccumulatorMemoryUsageBytes": {
+        "prescripciones": 18432,
+        "dosis_diaria_total_mg": 18432,
+        "dosis_diaria_prom_mg": 14976
+      },
+      "totalOutputDataSizeBytes": 90880,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "numBytesSpilledEstimate": 0,
+      "spilledRecords": 0,
+      "nReturned": 144,
+      "executionTimeMillisEstimate": 926
+    },
+    {
+      "$sort": {
+        "sortKey": {
+          "_id.anio": 1,
+          "_id.medicamento": 1
+        }
+      },
+      "totalDataSizeSortedBytesEstimate": 104288,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "nReturned": 144,
+      "executionTimeMillisEstimate": 926
+    }
+  ],
+  "queryShapeHash": "2769C728224EEAA6D31A5B13D1B75DA71D3DE276E2916D3B8CD092E343EB06A4",
+  "serverInfo": {
+    "host": "5454ce63a04a",
+    "port": 27017,
+    "version": "8.0.32",
+    "gitVersion": "f9eb55a7cc900f33a722a5b32a0fdbf54385c749"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "command": {
+    "aggregate": "visitas",
+    "pipeline": [
+      {
+        "$unwind": "$medicamentos"
+      },
+      {
+        "$match": {
+          "medicamentos.duracion_dias": {
+            "$gte": 60
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": {
+            "anio": {
+              "$year": {
+                "date": "$fecha",
+                "timezone": "-06:00"
+              }
+            },
+            "medicamento": "$medicamentos.nombre"
+          },
+          "prescripciones": {
+            "$sum": 1
+          },
+          "dosis_diaria_total_mg": {
+            "$sum": {
+              "$multiply": [
+                "$medicamentos.dosis_mg",
+                "$medicamentos.tomas_por_dia"
+              ]
+            }
+          },
+          "dosis_diaria_prom_mg": {
+            "$avg": {
+              "$multiply": [
+                "$medicamentos.dosis_mg",
+                "$medicamentos.tomas_por_dia"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id.anio": 1,
+          "_id.medicamento": 1
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "bariatria"
+  },
+  "ok": 1.0
+}

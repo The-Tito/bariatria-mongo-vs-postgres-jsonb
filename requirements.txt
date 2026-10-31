@@ -1,0 +1,4 @@
+# Dependencias del generador y del runner (versiones fijas para reproducir el experimento)
+pymongo==4.18.3
+psycopg[binary]==3.3.6
+matplotlib==3.11.2

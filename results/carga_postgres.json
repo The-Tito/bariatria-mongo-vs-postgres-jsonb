@@ -1,0 +1,17 @@
+{
+  "motor": "postgres",
+  "version": "18.4 (Debian 18.4-1.pgdg13+1)",
+  "documentos": 500000,
+  "segundos_insercion": 6.7,
+  "segundos_total": 8.5,
+  "bytes_columna_data": {
+    "p50": 1620,
+    "p95": 1928,
+    "max": 1992
+  },
+  "pct_filas_comprimidas_toast": 14.4,
+  "bytes_tabla": 921960448,
+  "bytes_toast": 8192,
+  "bytes_indices": 43302912,
+  "bytes_total": 965550080
+}

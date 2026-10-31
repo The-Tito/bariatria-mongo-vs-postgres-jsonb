@@ -1,0 +1,254 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "bariatria.visitas",
+    "parsedQuery": {
+      "$and": [
+        {
+          "estado": {
+            "$eq": "cerrada"
+          }
+        },
+        {
+          "fecha": {
+            "$lt": {
+              "$date": "2027-01-01T06:00:00Z"
+            }
+          }
+        },
+        {
+          "fecha": {
+            "$gte": {
+              "$date": "2026-01-01T06:00:00Z"
+            }
+          }
+        }
+      ]
+    },
+    "indexFilterSet": false,
+    "queryHash": "5B910903",
+    "planCacheShapeHash": "5B910903",
+    "planCacheKey": "79FDDF3D",
+    "optimizationTimeMillis": 0,
+    "optimizedPipeline": true,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "prunedSimilarIndexes": false,
+    "winningPlan": {
+      "isCached": false,
+      "stage": "PROJECTION_DEFAULT",
+      "transformBy": {
+        "_id": true,
+        "paciente_id": true,
+        "fecha": true,
+        "resumen": {
+          "imc": true,
+          "peso_kg": true
+        }
+      },
+      "inputStage": {
+        "stage": "SORT",
+        "sortPattern": {
+          "resumen.imc": -1,
+          "_id": 1
+        },
+        "memLimit": 104857600,
+        "limitAmount": 1000,
+        "type": "simple",
+        "inputStage": {
+          "stage": "FETCH",
+          "filter": {
+            "estado": {
+              "$eq": "cerrada"
+            }
+          },
+          "inputStage": {
+            "stage": "IXSCAN",
+            "keyPattern": {
+              "fecha": 1
+            },
+            "indexName": "idx_visitas_fecha",
+            "isMultiKey": false,
+            "multiKeyPaths": {
+              "fecha": []
+            },
+            "isUnique": false,
+            "isSparse": false,
+            "isPartial": false,
+            "indexVersion": 2,
+            "direction": "forward",
+            "indexBounds": {
+              "fecha": [
+                "[new Date(1767247200000), new Date(1798783200000))"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 1000,
+    "executionTimeMillis": 29,
+    "totalKeysExamined": 53941,
+    "totalDocsExamined": 53941,
+    "executionStages": {
+      "isCached": false,
+      "stage": "PROJECTION_DEFAULT",
+      "nReturned": 1000,
+      "executionTimeMillisEstimate": 24,
+      "works": 54943,
+      "advanced": 1000,
+      "needTime": 53942,
+      "needYield": 0,
+      "saveState": 2,
+      "restoreState": 2,
+      "isEOF": 1,
+      "transformBy": {
+        "_id": true,
+        "paciente_id": true,
+        "fecha": true,
+        "resumen": {
+          "imc": true,
+          "peso_kg": true
+        }
+      },
+      "inputStage": {
+        "stage": "SORT",
+        "nReturned": 1000,
+        "executionTimeMillisEstimate": 24,
+        "works": 54943,
+        "advanced": 1000,
+        "needTime": 53942,
+        "needYield": 0,
+        "saveState": 2,
+        "restoreState": 2,
+        "isEOF": 1,
+        "sortPattern": {
+          "resumen.imc": -1,
+          "_id": 1
+        },
+        "memLimit": 104857600,
+        "limitAmount": 1000,
+        "type": "simple",
+        "totalDataSizeSorted": 1380611,
+        "usedDisk": false,
+        "spills": 0,
+        "spilledDataStorageSize": 0,
+        "inputStage": {
+          "stage": "FETCH",
+          "filter": {
+            "estado": {
+              "$eq": "cerrada"
+            }
+          },
+          "nReturned": 53760,
+          "executionTimeMillisEstimate": 24,
+          "works": 53942,
+          "advanced": 53760,
+          "needTime": 181,
+          "needYield": 0,
+          "saveState": 2,
+          "restoreState": 2,
+          "isEOF": 1,
+          "docsExamined": 53941,
+          "alreadyHasObj": 0,
+          "inputStage": {
+            "stage": "IXSCAN",
+            "nReturned": 53941,
+            "executionTimeMillisEstimate": 0,
+            "works": 53942,
+            "advanced": 53941,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 2,
+            "restoreState": 2,
+            "isEOF": 1,
+            "keyPattern": {
+              "fecha": 1
+            },
+            "indexName": "idx_visitas_fecha",
+            "isMultiKey": false,
+            "multiKeyPaths": {
+              "fecha": []
+            },
+            "isUnique": false,
+            "isSparse": false,
+            "isPartial": false,
+            "indexVersion": 2,
+            "direction": "forward",
+            "indexBounds": {
+              "fecha": [
+                "[new Date(1767247200000), new Date(1798783200000))"
+              ]
+            },
+            "keysExamined": 53941,
+            "seeks": 1,
+            "dupsTested": 0,
+            "dupsDropped": 0
+          }
+        }
+      }
+    }
+  },
+  "queryShapeHash": "9EA685D578E93522D1ADBF646F4A15AE0AE6DD74FA13D79B0036DAE0D8CD1E14",
+  "command": {
+    "aggregate": "visitas",
+    "pipeline": [
+      {
+        "$match": {
+          "estado": "cerrada",
+          "fecha": {
+            "$gte": {
+              "$date": "2026-01-01T06:00:00Z"
+            },
+            "$lt": {
+              "$date": "2027-01-01T06:00:00Z"
+            }
+          }
+        }
+      },
+      {
+        "$sort": {
+          "resumen.imc": -1,
+          "_id": 1
+        }
+      },
+      {
+        "$limit": 1000
+      },
+      {
+        "$project": {
+          "paciente_id": 1,
+          "fecha": 1,
+          "resumen.imc": 1,
+          "resumen.peso_kg": 1
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "bariatria"
+  },
+  "serverInfo": {
+    "host": "5454ce63a04a",
+    "port": 27017,
+    "version": "8.0.32",
+    "gitVersion": "f9eb55a7cc900f33a722a5b32a0fdbf54385c749"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "ok": 1.0
+}

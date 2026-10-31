@@ -1,0 +1,22 @@
+{
+  "mongo": "8.0.32",
+  "postgres": "18.4 (Debian 18.4-1.pgdg13+1)",
+  "tolerancia_relativa_promedios": 1e-09,
+  "consultas": {
+    "Q1": {
+      "filas_mongo": 144,
+      "filas_postgres": 144,
+      "equivalentes": true,
+      "primeras_diferencias": [],
+      "max_diferencia_relativa": 0.0
+    },
+    "Q2": {
+      "filas_mongo": 1000,
+      "filas_postgres": 1000,
+      "equivalentes": true,
+      "primeras_diferencias": [],
+      "max_diferencia_relativa": 0.0
+    }
+  },
+  "equivalentes": true
+}
