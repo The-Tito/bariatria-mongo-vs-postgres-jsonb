@@ -20,7 +20,7 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 
 | Ruta | Contenido | Estado |
 |---|---|---|
-| `docker-compose.yml` | Motores con perfiles de recursos A/B/C parametrizados y telemetría | ⏳ |
+| `docker-compose.yml` | MongoDB 8.0.32 y PostgreSQL 18.4 con perfiles A/B/C parametrizados; telemetría (cAdvisor, Node Exporter, Prometheus a 1 s, configurado en `telemetry/`) | ✅ |
 | `synthetic_data_generator.py` | Dataset de 500k visitas con semilla fija y su carga en ambos motores | ⏳ |
 | `benchmark_runner/` | Runner en Python multiproceso | ⏳ |
 | `queries/` | Q1 y Q2 en MongoDB y SQL, con sus índices | ⏳ |
