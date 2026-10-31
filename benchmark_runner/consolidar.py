@@ -8,7 +8,7 @@ Escribe en <carpeta>/resumen/:
   celdas.csv        Una fila por celda: mediana, mínimo y máximo de cada KPI de sus repeticiones, estados,
                     muestras y huella de CPU y memoria por cada 1,000 documentos (M3)
   celdas.md         La misma tabla, resumida, para el reporte
-  graficas/*.png    P99 vs concurrencia, throttling vs QPS, RSS máximo y curva de RSS en el tiempo
+  graficas/*.png    P99 vs concurrencia, throttling vs QPS, RSS y working set máximos, y sus curvas en el tiempo
 """
 import csv
 import gzip
@@ -90,7 +90,7 @@ def consolidar(carpeta):
             {r["disk_spill"]: sum(x["disk_spill"] == r["disk_spill"] for x in reps) for r in reps}.items()))
 
         # Muestras, fracción de periodos estrangulados y M3, desde meta.json
-        muestras, fraccion, cpu_1000, rss_1000 = [], [], [], []
+        muestras, fraccion, cpu_1000, rss_1000, ws = [], [], [], [], []
         base = qid.split("_")[0]
         for r in reps:
             m = leer_meta(carpeta, r)
@@ -98,6 +98,7 @@ def consolidar(carpeta):
                 continue
             ok = m["consultas"]["exitosas_en_ventana"]
             muestras.append(ok)
+            ws.append(m.get("max_working_set_mb"))  # incluye memoria compartida y caché de páginas, a diferencia del RSS
             g0, g1 = m["contadores_inicio"]["cgroup"], m["contadores_fin"]["cgroup"]
             if g1 and "nr_periods" in g0 and "nr_periods" in g1 and g1["nr_periods"] > g0["nr_periods"]:
                 fraccion.append((g1["nr_throttled"] - g0["nr_throttled"]) / (g1["nr_periods"] - g0["nr_periods"]))
@@ -109,6 +110,7 @@ def consolidar(carpeta):
             rss = numero(r["max_rss_mb"])
             if ok and rss is not None:
                 rss_1000.append(rss / (conc * docs[base] / 1000))
+        c["max_working_set_mb_mediana"], c["max_working_set_mb_min"], c["max_working_set_mb_max"] = resumen(ws)
         c["muestras_min"] = min(muestras) if muestras else None
         c["fraccion_periodos_estrangulados_mediana"] = resumen(fraccion)[0]
         c["cpu_ms_por_1000_docs_mediana"] = resumen(cpu_1000)[0]
@@ -138,8 +140,8 @@ def escribir_markdown(celdas, ruta, docs):
         "completas (`ok` o `spill`). "
         f"M3: Q1 lee {docs['Q1']:,} documentos por consulta y Q2 {docs['Q2']:,}.", "",
         "| Motor | Perfil | Consulta | Clientes | Estado | QPS | P95 | P99 | Throttling (s) | RSS máx (MiB) "
-        "| Spill | Muestras mín. | CPU ms / 1k docs | RSS MiB / 1k docs |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        "| Working set máx (MiB) | Spill | Muestras mín. | CPU ms / 1k docs | RSS MiB / 1k docs |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for c in celdas:
         p99 = fmt(c["latency_p99_ms_mediana"])
         if c["latency_p99_ms_mediana"] is not None and c["repeticiones"] > 1:
@@ -147,7 +149,8 @@ def escribir_markdown(celdas, ruta, docs):
         lineas.append(
             f"| {NOMBRE[c['engine']]} | {CORTO[c['profile']]} | {c['query_id']} | {c['concurrency']} | {c['status']} "
             f"| {fmt(c['throughput_qps_mediana'], 3)} | {fmt(c['latency_p95_ms_mediana'])} | {p99} "
-            f"| {fmt(c['cpu_throttled_seconds_mediana'])} | {fmt(c['max_rss_mb_mediana'])} | {c['disk_spill']} "
+            f"| {fmt(c['cpu_throttled_seconds_mediana'])} | {fmt(c['max_rss_mb_mediana'])} "
+            f"| {fmt(c['max_working_set_mb_mediana'])} | {c['disk_spill']} "
             f"| {c['muestras_min'] if c['muestras_min'] is not None else '—'} "
             f"| {fmt(c['cpu_ms_por_1000_docs_mediana'], 2)} | {fmt(c['rss_mib_por_1000_docs_mediana'], 3)} |")
     ruta.write_text("\n".join(lineas) + "\n")
@@ -262,64 +265,73 @@ def graficas(celdas, carpeta, destino):
     fig.savefig(destino / "throttling_vs_qps.png", dpi=160)
     plt.close(fig)
 
-    # 3. RSS máximo vs concurrencia, con el límite de memoria del perfil
-    alto = 2.9 * len(consultas) + 0.7
-    fig, ejes = plt.subplots(len(consultas), len(perfiles), figsize=(3.4 * len(perfiles), alto),
-                             squeeze=False, sharey="col")
-    for i, qid in enumerate(consultas):
-        for j, perfil in enumerate(perfiles):
-            ax = ejes[i][j]
-            for m in motores:
-                xs, ys, err, _ = serie(celdas, m, perfil, qid, "max_rss_mb")
-                if xs:
-                    ax.errorbar(xs, ys, yerr=err, color=COLOR[m], marker=MARCADOR[m], markersize=6, capsize=3,
-                                elinewidth=1)
-            ax.axhline(LIMITE_MIB[perfil], color=TINTA_2, linewidth=1, linestyle="--")
-            ax.text(1, LIMITE_MIB[perfil], "límite", fontsize=7, color=TINTA_2, va="bottom", ha="right")
-            ax.set_xscale("log")
-            ax.set_xticks(CONCURRENCIAS, [str(c) for c in CONCURRENCIAS])
-            ax.minorticks_off()
-            ax.set_ylim(0, LIMITE_MIB[perfil] * 1.1)
-            ax.set_title(f"{qid} · perfil {CORTO[perfil]}", loc="left")
-            if j == 0:
-                ax.set_ylabel("RSS máximo (MiB)")
-            if i == len(consultas) - 1:
-                ax.set_xlabel("Clientes concurrentes")
-    tope = encabezado(fig, "Memoria residente máxima frente a concurrencia", motores, alto)
-    fig.tight_layout(rect=(0, 0, 1, tope))
-    fig.savefig(destino / "rss_vs_concurrencia.png", dpi=160)
-    plt.close(fig)
-
-    # 4. Curva de RSS en el tiempo: Q1, perfil C, 50 clientes, repetición 1 (la celda más exigente)
-    for qid in consultas:
-        corridas = {m: carpeta / "runs" / f"{m}_C_{qid}_c50_r1" for m in motores}
-        corridas = {m: r for m, r in corridas.items() if (r / "metricas.csv.gz").exists()}
-        if not corridas:
-            continue
-        fig, ax = plt.subplots(figsize=(7.2, 3.4))
-        for m, r in corridas.items():
-            meta = json.loads((r / "meta.json").read_text())
-            t0 = meta["fases"]["carga_inicio"]
-            datos = [x for x in csv.DictReader(gzip.open(r / "metricas.csv.gz", "rt")) if x["rss_bytes"]]
-            ax.plot([float(x["t"]) - t0 for x in datos], [float(x["rss_bytes"]) / 2 ** 20 for x in datos],
-                    color=COLOR[m], label=NOMBRE[m])
-            ax.annotate(f"{NOMBRE[m]}: {meta['fila_csv']['status']}", (float(datos[-1]["t"]) - t0,
-                        float(datos[-1]["rss_bytes"]) / 2 ** 20), textcoords="offset points", xytext=(-4, 6),
-                        ha="right", fontsize=7, color=TINTA_2)
-        meta = json.loads((next(iter(corridas.values())) / "meta.json").read_text())
-        f = meta["fases"]
-        ax.axvspan(f["ventana_inicio"] - f["carga_inicio"], f["ventana_fin"] - f["carga_inicio"], color=REJILLA,
-                   alpha=0.5, linewidth=0)
-        ax.axhline(LIMITE_MIB["PROFILE_C_SEVERE"], color=TINTA_2, linewidth=1, linestyle="--")
-        ax.text(0, LIMITE_MIB["PROFILE_C_SEVERE"], "límite 1,024 MiB", fontsize=7, color=TINTA_2, va="bottom", ha="right")
-        ax.set_ylim(0, 1150)
-        ax.set_xlabel("Segundos desde el inicio de la carga (zona sombreada: ventana de medición)")
-        ax.set_ylabel("RSS (MiB)")
-        ax.set_title(f"Curva de RSS · {qid}, perfil C, 50 clientes, rep. 1", loc="left", pad=22)
-        ax.legend(loc="lower right", bbox_to_anchor=(1, 1.0), ncol=len(corridas))
-        fig.tight_layout()
-        fig.savefig(destino / f"rss_curva_{qid}_C_c50.png", dpi=160)
+    # 3. Memoria máxima vs concurrencia, con el límite de memoria del perfil. El RSS no cuenta la memoria
+    # compartida (shared_buffers de Postgres); el working set sí, y es lo que el cgroup compara con su límite
+    for kpi, eje, titulo, archivo in [
+            ("max_rss_mb", "RSS máximo (MiB)", "Memoria residente máxima frente a concurrencia",
+             "rss_vs_concurrencia.png"),
+            ("max_working_set_mb", "Working set máximo (MiB)",
+             "Working set máximo frente a concurrencia (incluye memoria compartida y caché de páginas)",
+             "working_set_vs_concurrencia.png")]:
+        alto = 2.9 * len(consultas) + 0.7
+        fig, ejes = plt.subplots(len(consultas), len(perfiles), figsize=(3.4 * len(perfiles), alto),
+                                 squeeze=False, sharey="col")
+        for i, qid in enumerate(consultas):
+            for j, perfil in enumerate(perfiles):
+                ax = ejes[i][j]
+                for m in motores:
+                    xs, ys, err, _ = serie(celdas, m, perfil, qid, kpi)
+                    if xs:
+                        ax.errorbar(xs, ys, yerr=err, color=COLOR[m], marker=MARCADOR[m], markersize=6, capsize=3,
+                                    elinewidth=1)
+                ax.axhline(LIMITE_MIB[perfil], color=TINTA_2, linewidth=1, linestyle="--")
+                ax.text(1, LIMITE_MIB[perfil], "límite", fontsize=7, color=TINTA_2, va="bottom", ha="right")
+                ax.set_xscale("log")
+                ax.set_xticks(CONCURRENCIAS, [str(c) for c in CONCURRENCIAS])
+                ax.minorticks_off()
+                ax.set_ylim(0, LIMITE_MIB[perfil] * 1.1)
+                ax.set_title(f"{qid} · perfil {CORTO[perfil]}", loc="left")
+                if j == 0:
+                    ax.set_ylabel(eje)
+                if i == len(consultas) - 1:
+                    ax.set_xlabel("Clientes concurrentes")
+        tope = encabezado(fig, titulo, motores, alto)
+        fig.tight_layout(rect=(0, 0, 1, tope))
+        fig.savefig(destino / archivo, dpi=160)
         plt.close(fig)
+
+    # 4. Curvas de RSS y de working set en el tiempo: perfil C, 50 clientes, repetición 1 (la celda más exigente)
+    for col, nombre, prefijo in [("rss_bytes", "RSS", "rss_curva"),
+                                 ("working_set_bytes", "working set", "working_set_curva")]:
+        for qid in consultas:
+            corridas = {m: carpeta / "runs" / f"{m}_C_{qid}_c50_r1" for m in motores}
+            corridas = {m: r for m, r in corridas.items() if (r / "metricas.csv.gz").exists()}
+            if not corridas:
+                continue
+            fig, ax = plt.subplots(figsize=(7.2, 3.4))
+            for m, r in corridas.items():
+                meta = json.loads((r / "meta.json").read_text())
+                t0 = meta["fases"]["carga_inicio"]
+                datos = [x for x in csv.DictReader(gzip.open(r / "metricas.csv.gz", "rt")) if x[col]]
+                ax.plot([float(x["t"]) - t0 for x in datos], [float(x[col]) / 2 ** 20 for x in datos],
+                        color=COLOR[m], label=NOMBRE[m])
+                ax.annotate(f"{NOMBRE[m]}: {meta['fila_csv']['status']}", (float(datos[-1]["t"]) - t0,
+                            float(datos[-1][col]) / 2 ** 20), textcoords="offset points", xytext=(-4, 6),
+                            ha="right", fontsize=7, color=TINTA_2)
+            meta = json.loads((next(iter(corridas.values())) / "meta.json").read_text())
+            f = meta["fases"]
+            ax.axvspan(f["ventana_inicio"] - f["carga_inicio"], f["ventana_fin"] - f["carga_inicio"], color=REJILLA,
+                       alpha=0.5, linewidth=0)
+            ax.axhline(LIMITE_MIB["PROFILE_C_SEVERE"], color=TINTA_2, linewidth=1, linestyle="--")
+            ax.text(0, LIMITE_MIB["PROFILE_C_SEVERE"], "límite 1,024 MiB", fontsize=7, color=TINTA_2, va="bottom", ha="right")
+            ax.set_ylim(0, 1150)
+            ax.set_xlabel("Segundos desde el inicio de la carga (zona sombreada: ventana de medición)")
+            ax.set_ylabel(f"{nombre[0].upper()}{nombre[1:]} (MiB)")
+            ax.set_title(f"Curva de {nombre} · {qid}, perfil C, 50 clientes, rep. 1", loc="left", pad=22)
+            ax.legend(loc="lower right", bbox_to_anchor=(1, 1.0), ncol=len(corridas))
+            fig.tight_layout()
+            fig.savefig(destino / f"{prefijo}_{qid}_C_c50.png", dpi=160)
+            plt.close(fig)
 
 
 if __name__ == "__main__":
