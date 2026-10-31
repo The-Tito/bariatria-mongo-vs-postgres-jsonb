@@ -1,0 +1,140 @@
+{
+  "id": "postgres_C_Q1_WM64_c50_r1",
+  "engine": "postgres",
+  "profile": "PROFILE_C_SEVERE",
+  "query_id": "Q1_WM64",
+  "consulta": "Q1",
+  "variante_work_mem": "64MB",
+  "concurrency": 50,
+  "run_number": 1,
+  "carga": "lazo cerrado",
+  "duraciones_s": {
+    "calentamiento": 60,
+    "medicion": 300,
+    "enfriamiento": 60
+  },
+  "timeout_consulta_s": 300,
+  "fases": {
+    "preparacion_inicio": 1793480371.902566,
+    "preparacion_fin": 1793480378.726499,
+    "carga_inicio": 1793480380.40968,
+    "ventana_inicio": 1793480440.40968,
+    "ventana_fin": 1793480740.40968,
+    "carga_fin": 1793480753.755811,
+    "enfriamiento_fin": 1793480813.7618308
+  },
+  "contenedor_inicio": {
+    "id": "7c5f37f4a9043a0378cd11ed9c4c04a3cd65cc07360e9c4e6067eb3e5d5711c5",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T20:59:32.842287548Z"
+  },
+  "config_motor": {
+    "max_connections": "100",
+    "max_parallel_workers": "8",
+    "max_parallel_workers_per_gather": "2",
+    "server_version": "18.4 (Debian 18.4-1.pgdg13+1)",
+    "shared_buffers": "16384 8kB",
+    "temp_file_limit": "-1 kB",
+    "work_mem": "4096 kB"
+  },
+  "contadores_inicio": {
+    "t": 1793480440.4167109,
+    "cgroup": {
+      "usage_usec": 62029661,
+      "user_usec": 8643262,
+      "system_usec": 53386398,
+      "nice_usec": 0,
+      "nr_periods": 640,
+      "nr_throttled": 615,
+      "throttled_usec": 687920310,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 83903,
+      "oom": 15,
+      "oom_kill": 3,
+      "oom_group_kill": 0,
+      "sock_throttled": 98
+    },
+    "spill_error": "OperationalError: connection failed: connection to server at \"127.0.0.1\", port 5433 failed: FATAL:  the database system is in recovery mode"
+  },
+  "contadores_fin": {
+    "t": 1793480740.419476,
+    "cgroup": {
+      "usage_usec": 361325314,
+      "user_usec": 52554587,
+      "system_usec": 308770726,
+      "nice_usec": 0,
+      "nr_periods": 3659,
+      "nr_throttled": 3597,
+      "throttled_usec": 4000297838,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 468579,
+      "oom": 60,
+      "oom_kill": 19,
+      "oom_group_kill": 0,
+      "sock_throttled": 307
+    },
+    "spill_error": "OperationalError: connection failed: connection to server at \"127.0.0.1\", port 5433 failed: FATAL:  the database system is in recovery mode"
+  },
+  "disco_host": {
+    "min_libre_bytes": 60969811968,
+    "abortado": false
+  },
+  "contenedor_fin": {
+    "id": "7c5f37f4a9043a0378cd11ed9c4c04a3cd65cc07360e9c4e6067eb3e5d5711c5",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": true,
+    "exit_code": 0,
+    "started_at": "2026-10-31T20:59:32.842287548Z"
+  },
+  "consultas": {
+    "total": 1849,
+    "en_ventana": 1599,
+    "exitosas_en_ventana": 0,
+    "fallidas_total": 1849,
+    "errores": {
+      "OperationalError: consuming input failed: server closed the connection unexpectedly": 950,
+      "OperationalError: the connection is closed": 899
+    }
+  },
+  "oom_kill_eventos": 16,
+  "max_working_set_mb": 1023.2,
+  "spill_evidencia": {
+    "contadores_validos": false,
+    "por_contadores": false,
+    "lineas_log_en_ventana": 0
+  },
+  "fila_csv": {
+    "timestamp_epoch": 1793480440,
+    "engine": "postgres",
+    "profile": "PROFILE_C_SEVERE",
+    "query_id": "Q1_WM64",
+    "concurrency": 50,
+    "run_number": 1,
+    "throughput_qps": 0.0,
+    "latency_p50_ms": "",
+    "latency_p95_ms": "",
+    "latency_p99_ms": "",
+    "cpu_throttled_seconds": 3312.378,
+    "max_rss_mb": 955.4,
+    "disk_spill": "",
+    "status": "oom"
+  }
+}

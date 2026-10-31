@@ -14,6 +14,8 @@ cada número del reporte.
 | `variantes/` | Experimento complementario: Q1 en PostgreSQL con `work_mem` de 64 MB (mismo esquema de CSV) | `run_benchmarks.sh variantes` |
 | `mediciones.csv` | Una fila por corrida, con el esquema fijo del playbook | `benchmark_runner` |
 | `runs/<id>/` | Datos crudos de cada corrida (ver abajo) | `benchmark_runner` |
+| `matriz.log`, `variantes.log` | Salida de consola de la matriz y de las variantes | `run_benchmarks.sh` |
+| `resumen/`, `variantes/resumen/` | Mediana por celda (`celdas.csv`, `celdas.md`) y gráficas | `benchmark_runner/consolidar.py` |
 
 ## `mediciones.csv`
 
@@ -78,6 +80,15 @@ No se descartan corridas por tener pocas muestras: el número de consultas en la
 Cada celda (motor × perfil × consulta × concurrencia) tiene 3 filas. El reporte usa la **mediana** de las
 3 como valor de la celda y el mínimo y el máximo como barras de error. La mediana no se deja arrastrar
 por una sola repetición atípica, y con 3 valores el rango muestra la dispersión completa.
+
+`benchmark_runner/consolidar.py <carpeta>` lo calcula en `<carpeta>/resumen/`:
+- Latencias y M3 (CPU y RSS por 1,000 documentos leídos) solo con repeticiones completas (`ok`/`spill`):
+  las pocas consultas que terminan entre reinicios de un OOM no representan a la celda. QPS, throttling y
+  memoria usan las 3 (un QPS cercano a 0 es el dato real de una celda con OOM).
+- Además del RSS del CSV, el working set máximo (`runs/<id>/meta.json`): incluye memoria compartida
+  (`shared_buffers`) y caché de páginas, y es lo que el cgroup compara con su límite.
+- Gráficas: P99 frente a concurrencia, throttling frente a QPS, RSS y working set frente a concurrencia, y
+  sus curvas en el tiempo en la celda más exigente (perfil C, 50 clientes).
 
 ## Variantes de memoria
 
