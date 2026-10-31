@@ -294,7 +294,9 @@ def correr(a):
     throttled = None
     if "throttled_usec" in ci["cgroup"] and "throttled_usec" in cf["cgroup"]:
         throttled = (cf["cgroup"]["throttled_usec"] - ci["cgroup"]["throttled_usec"]) / 1e6
-    spill = False
+    # Sin las dos lecturas (p. ej., el motor estaba en recuperación tras un OOM) no se puede afirmar nada:
+    # disk_spill queda vacío en lugar de false. Tras una caída, Postgres además reinicia sus estadísticas
+    spill = None
     if "spill" in ci and "spill" in cf:
         claves = ("sort_spillToDisk", "group_spills") if a.engine == "mongo" else ("temp_files",)
         spill = any(cf["spill"][k] > ci["spill"][k] for k in claves)
@@ -345,7 +347,7 @@ def correr(a):
             "latency_p99_ms": round(percentil(exitosas, 99), 3) if exitosas else "",
             "cpu_throttled_seconds": round(throttled, 3) if throttled is not None else "",
             "max_rss_mb": max_rss if max_rss is not None else "",
-            "disk_spill": "true" if spill else "false", "status": status}
+            "disk_spill": {True: "true", False: "false", None: ""}[spill], "status": status}
     meta["fila_csv"] = fila
     (carpeta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
 
