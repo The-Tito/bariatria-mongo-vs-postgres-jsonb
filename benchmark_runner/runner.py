@@ -157,7 +157,7 @@ def inspeccionar(motor):
     info = json.loads(sh("docker", "inspect", CONTENEDOR[motor]))[0]
     hc, estado = info["HostConfig"], info["State"]
     imagen = json.loads(sh("docker", "image", "inspect", info["Image"]))[0]
-    return {"imagen": info["Config"]["Image"], "digest": (imagen.get("RepoDigests") or [None])[0],
+    return {"id": info["Id"], "imagen": info["Config"]["Image"], "digest": (imagen.get("RepoDigests") or [None])[0],
             "nano_cpus": hc["NanoCpus"], "memory": hc["Memory"], "memory_swap": hc["MemorySwap"],
             "running": estado["Running"], "oom_killed": estado["OOMKilled"], "exit_code": estado["ExitCode"],
             "started_at": estado["StartedAt"]}
@@ -172,13 +172,15 @@ def prom(ruta, **params):
         return json.load(r)["data"]["result"]
 
 
-def series(motor, ini, fin):
-    nombre = CONTENEDOR[motor]
+def series(contenedor_id, ini, fin):
+    # Se filtra por el ID del contenedor, no por su nombre: tras recrearlo, cAdvisor sigue publicando varios
+    # minutos la serie del contenedor anterior con el mismo nombre, y se mezclaría con la de esta corrida
+    sel = f'id="/docker/{contenedor_id}"'
     consultas = {
-        "cpu_uso_nucleos": f'rate(container_cpu_usage_seconds_total{{name="{nombre}"}}[5s])',
-        "cpu_throttled_s": f'container_cpu_cfs_throttled_seconds_total{{name="{nombre}"}}',
-        "rss_bytes": f'container_memory_rss{{name="{nombre}"}}',
-        "working_set_bytes": f'container_memory_working_set_bytes{{name="{nombre}"}}',
+        "cpu_uso_nucleos": f'rate(container_cpu_usage_seconds_total{{{sel}}}[5s])',
+        "cpu_throttled_s": f'container_cpu_cfs_throttled_seconds_total{{{sel}}}',
+        "rss_bytes": f'container_memory_rss{{{sel}}}',
+        "working_set_bytes": f'container_memory_working_set_bytes{{{sel}}}',
     }
     datos = {}
     for clave, q in consultas.items():
@@ -312,7 +314,8 @@ def correr(a):
     # RSS y series de cAdvisor
     max_rss = None
     try:
-        datos = series(a.engine, meta["fases"]["preparacion_fin"], meta["fases"]["enfriamiento_fin"])
+        datos = series(meta["contenedor_inicio"]["id"], meta["fases"]["preparacion_fin"],
+                       meta["fases"]["enfriamiento_fin"])
         with gzip.open(carpeta / "metricas.csv.gz", "wt", newline="") as f:
             w = csv.writer(f)
             claves = ["cpu_uso_nucleos", "cpu_throttled_s", "rss_bytes", "working_set_bytes"]
