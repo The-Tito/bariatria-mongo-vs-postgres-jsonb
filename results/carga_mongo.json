@@ -1,0 +1,14 @@
+{
+  "motor": "mongo",
+  "version": "8.0.32",
+  "documentos": 500000,
+  "segundos_insercion": 17.3,
+  "segundos_total": 17.5,
+  "bytes_datos_sin_comprimir": 508801312,
+  "bytes_promedio_documento": 1017,
+  "bytes_almacenamiento": 124686336,
+  "bytes_indices": {
+    "_id_": 13410304,
+    "idx_visitas_fecha": 5931008
+  }
+}
