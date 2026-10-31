@@ -1,0 +1,181 @@
+{
+  "bsonType": "object",
+  "title": "visitas",
+  "description": "Una atención clínica de un paciente con sus estudios embebidos (ADR-12). Los rangos son límites de plausibilidad para detectar errores del generador, no rangos clínicos.",
+  "additionalProperties": false,
+  "required": ["_id", "paciente_id", "fecha", "tipo", "estado", "datos_paciente", "resumen", "estudios"],
+  "properties": {
+    "_id": { "bsonType": "binData", "description": "UUID v4 generado por el cliente; garantiza la idempotencia del registro (ADR-14)" },
+    "paciente_id": { "bsonType": "objectId" },
+    "fecha": { "bsonType": "date", "description": "Inicio de la visita, en UTC" },
+    "tipo": { "enum": ["inicial", "seguimiento"] },
+    "estado": { "enum": ["abierta", "cerrada"], "description": "Una visita cerrada ya no acepta cambios (ADR-13)" },
+    "cerrada_en": { "bsonType": "date", "description": "Presente solo si estado = cerrada" },
+    "datos_paciente": {
+      "bsonType": "object",
+      "description": "Datos del paciente congelados a la fecha de la visita (procedencia, RN-10)",
+      "additionalProperties": false,
+      "required": ["sexo", "edad_anios"],
+      "properties": {
+        "sexo": { "enum": ["F", "M"] },
+        "edad_anios": { "bsonType": "int", "minimum": 18, "maximum": 100 }
+      }
+    },
+    "resumen": {
+      "bsonType": "object",
+      "description": "Copia de peso e IMC para la gráfica de evolución (ADR-09). imc se omite si falta la estatura",
+      "additionalProperties": false,
+      "required": ["peso_kg"],
+      "properties": {
+        "peso_kg": { "bsonType": "double", "minimum": 20, "maximum": 400 },
+        "imc": { "bsonType": "double", "minimum": 10, "maximum": 120 }
+      }
+    },
+    "estudios": {
+      "bsonType": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "oneOf": [
+          {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["tipo_estudio", "mediciones", "resultados_calculados"],
+            "properties": {
+              "tipo_estudio": { "enum": ["antropometria"] },
+              "mediciones": {
+                "bsonType": "object",
+                "description": "Báscula y cinta métrica",
+                "additionalProperties": false,
+                "required": ["peso_kg", "circunferencias_cm"],
+                "properties": {
+                  "peso_kg": { "bsonType": "double", "minimum": 20, "maximum": 400 },
+                  "estatura_cm": { "bsonType": "double", "minimum": 50, "maximum": 250 },
+                  "circunferencias_cm": {
+                    "bsonType": "object",
+                    "additionalProperties": false,
+                    "required": ["cintura", "cadera", "muneca", "brazo"],
+                    "properties": {
+                      "cintura": { "bsonType": "double", "minimum": 40, "maximum": 250 },
+                      "cadera": { "bsonType": "double", "minimum": 50, "maximum": 250 },
+                      "muneca": { "bsonType": "double", "minimum": 10, "maximum": 30 },
+                      "brazo": { "bsonType": "double", "minimum": 15, "maximum": 80 }
+                    }
+                  }
+                }
+              },
+              "resultados_calculados": {
+                "bsonType": "object",
+                "description": "imc solo existe si se midió la estatura (RN-10)",
+                "additionalProperties": false,
+                "required": ["indice_cintura_cadera"],
+                "properties": {
+                  "imc": { "bsonType": "double", "minimum": 10, "maximum": 120 },
+                  "indice_cintura_cadera": { "bsonType": "double", "minimum": 0.4, "maximum": 2.0 }
+                }
+              }
+            }
+          },
+          {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["tipo_estudio", "mediciones"],
+            "properties": {
+              "tipo_estudio": { "enum": ["pliegues_cutaneos"] },
+              "mediciones": {
+                "bsonType": "object",
+                "description": "Pinza de pliegues",
+                "additionalProperties": false,
+                "required": ["pliegues_mm"],
+                "properties": {
+                  "pliegues_mm": {
+                    "bsonType": "object",
+                    "additionalProperties": false,
+                    "required": ["biceps", "triceps", "subescapular", "suprailiaco"],
+                    "properties": {
+                      "biceps": { "bsonType": "double", "minimum": 1, "maximum": 80 },
+                      "triceps": { "bsonType": "double", "minimum": 1, "maximum": 80 },
+                      "subescapular": { "bsonType": "double", "minimum": 1, "maximum": 80 },
+                      "suprailiaco": { "bsonType": "double", "minimum": 1, "maximum": 80 }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["tipo_estudio", "mediciones"],
+            "properties": {
+              "tipo_estudio": { "enum": ["signos_vitales"] },
+              "mediciones": {
+                "bsonType": "object",
+                "description": "Glucómetro (en ayuno) y baumanómetro",
+                "additionalProperties": false,
+                "required": ["glucosa_mg_dl", "presion"],
+                "properties": {
+                  "glucosa_mg_dl": { "bsonType": "int", "minimum": 30, "maximum": 600 },
+                  "presion": {
+                    "bsonType": "object",
+                    "additionalProperties": false,
+                    "required": ["sistolica", "diastolica"],
+                    "properties": {
+                      "sistolica": { "bsonType": "int", "minimum": 50, "maximum": 300 },
+                      "diastolica": { "bsonType": "int", "minimum": 30, "maximum": 200 }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "bsonType": "object",
+            "additionalProperties": false,
+            "required": ["tipo_estudio", "mediciones"],
+            "properties": {
+              "tipo_estudio": { "enum": ["bioimpedancia"] },
+              "mediciones": {
+                "bsonType": "object",
+                "description": "Datos reportados por la báscula de bioimpedancia, no calculados por la aplicación",
+                "additionalProperties": false,
+                "required": ["pct_grasa", "masa_muscular_kg", "grasa_visceral", "edad_metabolica"],
+                "properties": {
+                  "pct_grasa": { "bsonType": "double", "minimum": 3, "maximum": 75 },
+                  "masa_muscular_kg": { "bsonType": "double", "minimum": 10, "maximum": 150 },
+                  "grasa_visceral": { "bsonType": "int", "minimum": 1, "maximum": 59 },
+                  "edad_metabolica": { "bsonType": "int", "minimum": 12, "maximum": 99 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "notas": { "bsonType": "string", "maxLength": 1000 },
+    "dieta": {
+      "bsonType": "object",
+      "additionalProperties": false,
+      "required": ["nombre", "indicaciones"],
+      "properties": {
+        "nombre": { "bsonType": "string" },
+        "indicaciones": { "bsonType": "string", "maxLength": 500 }
+      }
+    },
+    "medicamentos": {
+      "bsonType": "array",
+      "maxItems": 5,
+      "items": {
+        "bsonType": "object",
+        "additionalProperties": false,
+        "required": ["nombre", "dosis", "frecuencia", "duracion"],
+        "properties": {
+          "nombre": { "bsonType": "string" },
+          "dosis": { "bsonType": "string" },
+          "frecuencia": { "bsonType": "string" },
+          "duracion": { "bsonType": "string" }
+        }
+      }
+    }
+  }
+}

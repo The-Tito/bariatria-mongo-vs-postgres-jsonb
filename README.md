@@ -23,7 +23,7 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 | `docker-compose.yml` | MongoDB 8.0.32 y PostgreSQL 18.4 con perfiles A/B/C parametrizados; telemetría (cAdvisor, Node Exporter, Prometheus a 1 s, configurado en `telemetry/`) | ✅ |
 | `synthetic_data_generator.py` | Dataset de 500k visitas con semilla fija y su carga en ambos motores | ⏳ |
 | `benchmark_runner/` | Runner en Python multiproceso | ⏳ |
-| `queries/` | Q1 y Q2 en MongoDB y SQL, con sus índices | ⏳ |
+| `queries/` | Esquemas (validador `$jsonSchema`, DDL JSONB) e índices de ambos motores; Q1 y Q2 en MongoDB y SQL | 🔄 esquemas listos |
 | `run_benchmarks.sh` | Automatiza la matriz de mediciones; `check` verifica el entorno | 🔄 `check` listo |
 | `results/` | CSV con el esquema fijo y evidencia de spill/OOM | ⏳ |
 
