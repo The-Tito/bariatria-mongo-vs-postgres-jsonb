@@ -108,7 +108,8 @@ cmd_matriz() {
         total=$((total + 1))
         if registrada results/mediciones.csv "$e" "$p" "$q" "$c" "$r"; then hechas=$((hechas + 1)); continue; fi
         echo "== $(date '+%H:%M:%S') corrida $((hechas + 1)) de 108"
-        cmd_corrida "$e" "$p" "$q" "$c" "$r"
+        # Una falla del script no detiene la matriz: queda en el log y la corrida se repite al relanzar
+        cmd_corrida "$e" "$p" "$q" "$c" "$r" || echo "== FALLA del runner en ${e}_${p}_${q}_c${c}_r${r}; se repetirá al relanzar"
         hechas=$((hechas + 1))
       done
     done; done; done
@@ -122,7 +123,8 @@ cmd_variantes() {
   for r in 1 2 3; do for p in "${PERFILES[@]}"; do for c in "${CONCURRENCIAS[@]}"; do
     if ! registrada results/variantes/mediciones.csv postgres "$p" Q1_WM64 "$c" "$r"; then
       echo "== $(date '+%H:%M:%S') variante $((hechas + 1)) de 27"
-      cmd_corrida postgres "$p" Q1 "$c" "$r" --work-mem 64MB --salida results/variantes
+      cmd_corrida postgres "$p" Q1 "$c" "$r" --work-mem 64MB --salida results/variantes \
+        || echo "== FALLA del runner en postgres_${p}_Q1_WM64_c${c}_r${r}; se repetirá al relanzar"
     fi
     hechas=$((hechas + 1))
   done; done; done
@@ -132,7 +134,8 @@ cmd_variantes() {
 usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
 
 case "${1:-}" in
-  check)   cmd_check | tee results/entorno.txt ;;
+  # Cada verificación se agrega con su fecha: queda constancia del entorno de cada sesión de medición
+  check)   { echo "######## $(date '+%Y-%m-%d %H:%M:%S %Z')"; cmd_check; echo; } | tee -a results/entorno.txt ;;
   piloto)  cmd_piloto ;;
   matriz)  cmd_matriz ;;
   variantes) cmd_variantes ;;
