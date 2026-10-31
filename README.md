@@ -22,8 +22,8 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 |---|---|---|
 | `docker-compose.yml` | MongoDB 8.0.32 y PostgreSQL 18.4 con perfiles A/B/C parametrizados; telemetría (cAdvisor, Node Exporter, Prometheus a 1 s, configurado en `telemetry/`) | ✅ |
 | `synthetic_data_generator.py` | Dataset de 500k visitas con semilla fija y su carga en ambos motores | ✅ |
-| `benchmark_runner/` | Runner en Python multiproceso | ⏳ |
-| `queries/` | Esquemas (validador `$jsonSchema`, DDL JSONB) e índices de ambos motores; Q1 y Q2 en MongoDB y SQL | 🔄 esquemas listos |
+| `benchmark_runner/` | Runner en Python multiproceso; verificador de equivalencia de Q1 y Q2 entre motores | 🔄 verificador listo |
+| `queries/` | Esquemas (validador `$jsonSchema`, DDL JSONB) e índices de ambos motores; Q1 y Q2 en MongoDB y SQL | ✅ |
 | `run_benchmarks.sh` | Automatiza la matriz de mediciones; `check` verifica el entorno | 🔄 `check` listo |
 | `results/` | CSV con el esquema fijo, evidencia de spill/OOM, manifiesto del dataset y estado de la carga | 🔄 dataset y carga |
 
@@ -52,6 +52,15 @@ docker compose --profile mongo stop mongo
 DB_CPUS=4 DB_MEM=4096m docker compose --profile postgres up -d --wait postgres
 .venv/bin/python synthetic_data_generator.py load postgres
 docker compose --profile postgres stop postgres
+
+# Equivalencia de Q1 y Q2 entre motores y planes de ejecución (results/verificacion, results/explain)
+DB_CPUS=4 DB_MEM=4096m docker compose --profile mongo up -d --wait mongo
+.venv/bin/python benchmark_runner/verificar.py ejecutar mongo
+docker compose --profile mongo stop mongo
+DB_CPUS=4 DB_MEM=4096m docker compose --profile postgres up -d --wait postgres
+.venv/bin/python benchmark_runner/verificar.py ejecutar postgres
+docker compose --profile postgres stop postgres
+.venv/bin/python benchmark_runner/verificar.py comparar
 ```
 
 La carga en MongoDB pasa por el validador `$jsonSchema`: si el archivo no cumple el contrato de
