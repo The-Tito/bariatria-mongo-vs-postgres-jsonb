@@ -22,10 +22,10 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 |---|---|---|
 | `docker-compose.yml` | MongoDB 8.0.32 y PostgreSQL 18.4 con perfiles A/B/C parametrizados; telemetría (cAdvisor, Node Exporter, Prometheus a 1 s, configurado en `telemetry/`) | ✅ |
 | `synthetic_data_generator.py` | Dataset de 500k visitas con semilla fija y su carga en ambos motores | ✅ |
-| `benchmark_runner/` | Runner en Python multiproceso; verificador de equivalencia de Q1 y Q2 entre motores | 🔄 verificador listo |
+| `benchmark_runner/` | Runner en Python multiproceso (lazo cerrado); verificador de equivalencia y planes de ejecución | ✅ |
 | `queries/` | Esquemas (validador `$jsonSchema`, DDL JSONB) e índices de ambos motores; Q1 y Q2 en MongoDB y SQL | ✅ |
-| `run_benchmarks.sh` | Automatiza la matriz de mediciones; `check` verifica el entorno | 🔄 `check` listo |
-| `results/` | CSV con el esquema fijo, evidencia de spill/OOM, manifiesto del dataset y estado de la carga | 🔄 dataset y carga |
+| `run_benchmarks.sh` | `check`, `piloto`, `matriz` (108 corridas por rondas, retomable) y `variantes` | ✅ |
+| `results/` | CSV con el esquema fijo, evidencia de spill/OOM, planes de ejecución, pilotos y variantes de memoria | 🔄 pilotos listos |
 
 ## Requisitos
 
@@ -65,4 +65,17 @@ docker compose --profile postgres stop postgres
 
 La carga en MongoDB pasa por el validador `$jsonSchema`: si el archivo no cumple el contrato de
 `queries/README.md`, se rechaza y se reporta cada motivo.
+
+## Medir
+
+```bash
+./run_benchmarks.sh check       # entorno -> results/entorno.txt
+./run_benchmarks.sh piloto      # celda piloto -> results/piloto/
+./run_benchmarks.sh matriz      # 36 celdas x 3 repeticiones (~14 h) -> results/mediciones.csv
+./run_benchmarks.sh variantes   # Q1 en PostgreSQL con work_mem de 64 MB (~3.5 h) -> results/variantes/
+```
+
+`matriz` y `variantes` se pueden interrumpir y volver a lanzar: saltan las corridas ya registradas.
+Durante las corridas el equipo no debe usarse para otras tareas. El protocolo y la definición de cada
+columna están en `results/README.md`.
 

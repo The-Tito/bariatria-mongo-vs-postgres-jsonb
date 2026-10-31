@@ -8,7 +8,10 @@ cada número del reporte.
 | `dataset_manifest.json` | Parámetros, distribuciones y sha256 del dataset | `synthetic_data_generator.py generate` |
 | `carga_mongo.json`, `carga_postgres.json` | Documentos, tamaños, TOAST y tiempos de carga | `synthetic_data_generator.py load` |
 | `entorno.txt` | Especificaciones del host y verificación de cgroups el día de las corridas | `run_benchmarks.sh check` |
-| `explain/` | Planes de ejecución: `explain("executionStats")` y `EXPLAIN (ANALYZE, BUFFERS)` | `benchmark_runner` |
+| `explain/` | Planes de ejecución: `explain("executionStats")` y `EXPLAIN (ANALYZE, BUFFERS)` | `benchmark_runner/verificar.py` |
+| `explain/variantes/` | Planes de Q1 y Q2 con cada variante de memoria del playbook | `verificar.py variantes` |
+| `piloto/` | Celdas piloto (Q1, perfil C, 50 clientes) con el mismo formato que la matriz | `run_benchmarks.sh piloto` |
+| `variantes/` | Experimento complementario: Q1 en PostgreSQL con `work_mem` de 64 MB (mismo esquema de CSV) | `run_benchmarks.sh variantes` |
 | `mediciones.csv` | Una fila por corrida, con el esquema fijo del playbook | `benchmark_runner` |
 | `runs/<id>/` | Datos crudos de cada corrida (ver abajo) | `benchmark_runner` |
 
@@ -25,7 +28,7 @@ timestamp_epoch,engine,profile,query_id,concurrency,run_number,throughput_qps,la
 | `timestamp_epoch` | Segundos Unix (UTC, entero) al **inicio** de la ventana de medición de 300 s |
 | `engine` | `mongo` o `postgres` |
 | `profile` | `PROFILE_A_BASELINE`, `PROFILE_B_MEDIUM` o `PROFILE_C_SEVERE` |
-| `query_id` | `Q1` o `Q2`. La codificación de las variantes de memoria de Q2 se define después de la celda piloto |
+| `query_id` | `Q1` o `Q2` en la matriz (configuración de fábrica). En `variantes/mediciones.csv`, `Q1_WM64`: Q1 con `work_mem` de 64 MB |
 | `concurrency` | Clientes simultáneos: 1, 10 o 50 |
 | `run_number` | Repetición: 1, 2 o 3 |
 | `throughput_qps` | Consultas **terminadas con éxito dentro de la ventana** ÷ duración de la ventana (300 s) |
@@ -75,3 +78,21 @@ No se descartan corridas por tener pocas muestras: el número de consultas en la
 Cada celda (motor × perfil × consulta × concurrencia) tiene 3 filas. El reporte usa la **mediana** de las
 3 como valor de la celda y el mínimo y el máximo como barras de error. La mediana no se deja arrastrar
 por una sola repetición atípica, y con 3 valores el rango muestra la dispersión completa.
+
+## Variantes de memoria
+
+El playbook propone variar la memoria en Q2 (MongoDB `allowDiskUse` false/true; PostgreSQL `work_mem`
+4 MB/64 MB). Los planes de ejecución muestran que con nuestras consultas solo una de las cuatro
+combinaciones cambia algo [`explain/variantes/`]:
+
+| Variante | Q1 | Q2 |
+|---|---|---|
+| MongoDB `allowDiskUse` false / true | Igual: `$group` de 18 KB, sin volcado | Igual: ordena 1.4 MB (límite de 100 MB), sin volcado |
+| PostgreSQL `work_mem` 4 MB / 64 MB | **Cambia**: con 64 MB el `Incremental Sort` cabe en memoria, pero el ordenamiento de las filas completas sigue volcando ~230 MB por proceso; los temporales escritos bajan de ~1.7 GB a ~0.8 GB | Igual: top-N heapsort de 275 kB |
+
+Por eso la matriz se mide con la configuración de fábrica (en MongoDB 8, `allowDiskUse` es `true` por
+defecto; en PostgreSQL, `work_mem` es 4 MB), y la única variante con efecto se mide aparte: Q1 en
+PostgreSQL con `work_mem` de 64 MB en los 3 perfiles y las 3 concurrencias, con 3 repeticiones
+(`variantes/mediciones.csv`). El valor se fija por sesión (`SET work_mem`), como lo haría una aplicación
+para un reporte pesado.
+
