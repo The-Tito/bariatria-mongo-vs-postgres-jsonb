@@ -30,13 +30,34 @@ timestamp_epoch,engine,profile,query_id,concurrency,run_number,throughput_qps,la
 | `run_number` | Repetición: 1, 2 o 3 |
 | `throughput_qps` | Consultas **terminadas con éxito dentro de la ventana** ÷ duración de la ventana (300 s) |
 | `latency_p50_ms`, `latency_p95_ms`, `latency_p99_ms` | Percentiles (rango más cercano) de las latencias de esas consultas, en ms. La latencia se mide en el cliente: desde que se envía la consulta hasta que se consume el último resultado |
-| `cpu_throttled_seconds` | Segundos de CPU estrangulada del contenedor durante la ventana: diferencia de `throttled_usec` en `cpu.stat` (cgroups v2) entre el inicio y el fin, ÷ 10⁶. Es el mismo contador que expone cAdvisor como `container_cpu_cfs_throttled_seconds_total`; se lee directamente para que los límites de la ventana sean exactos, y la serie de cAdvisor queda en `runs/` para contrastar |
+| `cpu_throttled_seconds` | Segundos de CPU estrangulada del contenedor durante la ventana: diferencia de `throttled_usec` en `cpu.stat` (cgroups v2) entre el inicio y el fin, ÷ 10⁶. Es el mismo contador que expone cAdvisor como `container_cpu_cfs_throttled_seconds_total`; se lee directamente para que los límites de la ventana sean exactos, y la serie de cAdvisor queda en `runs/` para contrastar. **Suma el tiempo que espera cada proceso o hilo listo para correr**, así que puede superar la duración de la ventana (p. ej., 3 procesos de Postgres estrangulados durante 20 s ≈ 60 s). En `meta.json` quedan también `nr_periods` y `nr_throttled` para calcular la fracción de periodos estrangulados |
 | `max_rss_mb` | Máximo de `container_memory_rss` (cAdvisor, cada 1 s) durante la ventana, en MiB |
-| `disk_spill` | `true` si el motor escribió datos temporales durante la ventana. MongoDB: aumento de `metrics.query.sort.spillToDisk` o `metrics.query.group.spills` en `serverStatus`. PostgreSQL: aumento de `temp_files` en `pg_stat_database` |
+| `disk_spill` | `true` si el motor escribió datos temporales durante la ventana. MongoDB: aumento de `metrics.query.sort.spillToDisk` o `metrics.query.group.spills` en `serverStatus`. PostgreSQL: aumento de `temp_files` en `pg_stat_database`. **Vacío** si no se pudieron leer los contadores al inicio o al fin de la ventana (por ejemplo, con el motor en recuperación tras un OOM); el motivo queda en `meta.json` |
 | `status` | `oom` si el contenedor murió por falta de memoria (`State.OOMKilled`); si no, `error` si alguna consulta falló o ninguna terminó; si no, `spill` si `disk_spill` es `true`; si no, `ok` |
 
 Si una corrida no completa ninguna consulta (por ejemplo, por OOM), `throughput_qps` vale 0 y las
 columnas de latencia quedan vacías.
+
+**OOM en PostgreSQL.** El OOM killer de cgroups suele matar un proceso hijo (un backend), no el proceso
+principal: el contenedor sigue vivo, pero Postgres reinicia todos sus procesos y entra en recuperación.
+Por eso `oom` se detecta con el contador `oom_kill` de `memory.events` y no solo con `State.OOMKilled`.
+
+## Protocolo de cada corrida
+
+1. Se recrea el contenedor del motor con los límites del perfil (la caché del motor arranca vacía) y se
+   ejecuta `drop_caches` en la VM (caché del sistema vacía). El otro motor queda detenido.
+2. Carga en **lazo cerrado**: N clientes (1, 10 o 50) en procesos separados, con una conexión cada uno,
+   empiezan a la vez; cada cliente envía la siguiente consulta en cuanto termina la anterior. El motor
+   siempre tiene N consultas en curso.
+3. Calentamiento de 60 s con los mismos N clientes, ventana de medición de 300 s y enfriamiento de 60 s
+   sin carga. Al cerrar la ventana, los clientes terminan la consulta que tengan en curso y no envían más.
+4. Tiempo límite por consulta: 300 s (`maxTimeMS` en MongoDB, `statement_timeout` en PostgreSQL). Una
+   consulta que lo excede cuenta como fallida.
+5. Si el espacio libre del host baja de 8 GiB, se detiene el motor y la corrida queda como `error`.
+6. Las corridas se ejecutan por rondas: primero la repetición 1 de todas las celdas, luego la 2 y la 3.
+
+No se descartan corridas por tener pocas muestras: el número de consultas en la ventana queda en
+`meta.json` y el reporte señala las celdas con menos de 30.
 
 ## `runs/<id>/`
 
@@ -47,7 +68,7 @@ columnas de latencia quedan vacías.
 | `meta.json` | Identificadores de la celda; horas de inicio y fin de cada fase (limpieza de caché, calentamiento, medición, enfriamiento); imágenes con su digest; límites reales del contenedor (`docker inspect`); configuración de memoria del motor; consultas completadas y fallidas con sus mensajes; contadores de spill y throttling al inicio y al fin; máximo de `working_set` |
 | `latencias.csv.gz` | Una fila por consulta: cliente, inicio y fin (ms epoch), latencia (ms), resultado (`ok` o el error), y si cayó dentro de la ventana |
 | `metricas.csv.gz` | Series de cAdvisor cada 1 s del contenedor del motor durante toda la corrida: uso de CPU, CPU estrangulada, RSS y working set |
-| `motor.log` | Log del motor durante la corrida: archivos temporales de Postgres (`log_temp_files = 0`) y operaciones lentas de MongoDB (incluyen `usedDisk`). Es la evidencia de spill y OOM |
+| `motor.log.gz` | Log del motor durante la corrida: archivos temporales de Postgres (`log_temp_files = 0`) y operaciones lentas de MongoDB (incluyen `usedDisk`). Es la evidencia de spill y OOM |
 
 ## Resumen de las repeticiones
 
