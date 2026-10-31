@@ -24,10 +24,13 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 | `synthetic_data_generator.py` | Dataset de 500k visitas con semilla fija y su carga en ambos motores | ⏳ |
 | `benchmark_runner/` | Runner en Python multiproceso | ⏳ |
 | `queries/` | Q1 y Q2 en MongoDB y SQL, con sus índices | ⏳ |
-| `run_benchmarks.sh` | Automatiza la matriz de mediciones | ⏳ |
+| `run_benchmarks.sh` | Automatiza la matriz de mediciones; `check` verifica el entorno | 🔄 `check` listo |
 | `results/` | CSV con el esquema fijo y evidencia de spill/OOM | ⏳ |
 
 ## Requisitos
 
 - Docker con cgroups v2 (Linux nativo, o Docker Desktop / VM en macOS y Windows)
 - Python 3.11 o superior
+
+Antes de medir, ejecuta `./run_benchmarks.sh check` y guarda su salida: documenta el host y confirma que
+cgroups v2 aplica los límites de CPU y memoria, el swap en cero y el registro de throttling.
