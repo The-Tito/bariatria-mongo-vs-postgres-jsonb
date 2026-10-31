@@ -225,8 +225,8 @@ def graficas(celdas, carpeta, destino):
             ax.minorticks_off()
             ax.set_title(f"{qid} · perfil {CORTO[perfil]}", loc="left")
             if avisos:  # celdas sin latencias (p. ej., OOM): se nombran, no se dibujan
-                ax.text(0.02, 0.02, "Sin consultas exitosas:\n" + "\n".join(avisos), transform=ax.transAxes,
-                        fontsize=7, color=TINTA_2, va="bottom")
+                ax.text(0.98, 0.04, "Sin consultas exitosas:\n" + "\n".join(avisos), transform=ax.transAxes,
+                        fontsize=7, color=TINTA_2, va="bottom", ha="right")
             if j == 0:
                 ax.set_ylabel("P99 (ms, escala log)")
             if i == len(consultas) - 1:
@@ -275,7 +275,7 @@ def graficas(celdas, carpeta, destino):
                     ax.errorbar(xs, ys, yerr=err, color=COLOR[m], marker=MARCADOR[m], markersize=6, capsize=3,
                                 elinewidth=1)
             ax.axhline(LIMITE_MIB[perfil], color=TINTA_2, linewidth=1, linestyle="--")
-            ax.text(1, LIMITE_MIB[perfil], "límite", fontsize=7, color=TINTA_2, va="bottom")
+            ax.text(1, LIMITE_MIB[perfil], "límite", fontsize=7, color=TINTA_2, va="bottom", ha="right")
             ax.set_xscale("log")
             ax.set_xticks(CONCURRENCIAS, [str(c) for c in CONCURRENCIAS])
             ax.minorticks_off()
@@ -311,7 +311,7 @@ def graficas(celdas, carpeta, destino):
         ax.axvspan(f["ventana_inicio"] - f["carga_inicio"], f["ventana_fin"] - f["carga_inicio"], color=REJILLA,
                    alpha=0.5, linewidth=0)
         ax.axhline(LIMITE_MIB["PROFILE_C_SEVERE"], color=TINTA_2, linewidth=1, linestyle="--")
-        ax.text(0, LIMITE_MIB["PROFILE_C_SEVERE"], "límite 1,024 MiB", fontsize=7, color=TINTA_2, va="bottom")
+        ax.text(0, LIMITE_MIB["PROFILE_C_SEVERE"], "límite 1,024 MiB", fontsize=7, color=TINTA_2, va="bottom", ha="right")
         ax.set_ylim(0, 1150)
         ax.set_xlabel("Segundos desde el inicio de la carga (zona sombreada: ventana de medición)")
         ax.set_ylabel("RSS (MiB)")
