@@ -2,9 +2,21 @@
 # Automatiza la matriz de mediciones (motor × perfil × consulta × concurrencia × repetición).
 #
 # Uso:
-#   ./run_benchmarks.sh check    Verifica que el host aplica los límites de cgroups v2 y deja
-#                                constancia de sus especificaciones (sección 1 del reporte).
+#   ./run_benchmarks.sh check     Verifica que el host aplica los límites de cgroups v2 y deja
+#                                 constancia de sus especificaciones (sección 1 del reporte).
+#   ./run_benchmarks.sh piloto    Celda piloto (postgres, perfil C, Q1, 50 clientes) en results/piloto/.
+#   ./run_benchmarks.sh matriz    Matriz completa por rondas (repetición 1 de todas las celdas, luego 2
+#                                 y 3). Retoma donde se quedó: salta las corridas ya registradas en
+#                                 results/mediciones.csv.
+#   ./run_benchmarks.sh corrida <engine> <A|B|C> <Q1|Q2> <concurrencia> <repetición>
 set -euo pipefail
+
+cd "$(dirname "$0")"
+PY=".venv/bin/python"
+MOTORES=(mongo postgres)
+PERFILES=(A B C)
+CONSULTAS=(Q1 Q2)
+CONCURRENCIAS=(1 10 50)
 
 IMG="alpine:3.20"
 
@@ -64,9 +76,50 @@ cmd_check() {
   echo "RESULTADO: el entorno cumple"
 }
 
-usage() { sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; }
+# En macOS impide que el equipo se suspenda mientras dure el script
+mantener_despierto() {
+  if command -v caffeinate >/dev/null; then caffeinate -dims -w $$ & fi
+}
+
+perfil_id() { case "$1" in A) echo PROFILE_A_BASELINE ;; B) echo PROFILE_B_MEDIUM ;; C) echo PROFILE_C_SEVERE ;; esac; }
+
+registrada() {  # engine perfil consulta concurrencia repetición
+  [[ -f results/mediciones.csv ]] && awk -F, -v e="$1" -v p="$(perfil_id "$2")" -v q="$3" -v c="$4" -v r="$5" \
+    '$2==e && $3==p && $4==q && $5==c && $6==r {f=1} END {exit !f}' results/mediciones.csv
+}
+
+cmd_corrida() {
+  "$PY" benchmark_runner/runner.py --engine "$1" --profile "$2" --query "$3" --concurrency "$4" --run "$5" "${@:6}"
+}
+
+cmd_piloto() {
+  mantener_despierto
+  cmd_corrida postgres C Q1 50 1 --salida results/piloto
+}
+
+cmd_matriz() {
+  mantener_despierto
+  local total=0 hechas=0
+  for r in 1 2 3; do
+    for e in "${MOTORES[@]}"; do for p in "${PERFILES[@]}"; do for q in "${CONSULTAS[@]}"; do
+      for c in "${CONCURRENCIAS[@]}"; do
+        total=$((total + 1))
+        if registrada "$e" "$p" "$q" "$c" "$r"; then hechas=$((hechas + 1)); continue; fi
+        echo "== $(date '+%H:%M:%S') corrida $((hechas + 1)) de 108"
+        cmd_corrida "$e" "$p" "$q" "$c" "$r"
+        hechas=$((hechas + 1))
+      done
+    done; done; done
+  done
+  echo "Matriz completa: $hechas de $total corridas en results/mediciones.csv"
+}
+
+usage() { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; }
 
 case "${1:-}" in
-  check) cmd_check ;;
-  *)     usage; exit 1 ;;
+  check)   cmd_check | tee results/entorno.txt ;;
+  piloto)  cmd_piloto ;;
+  matriz)  cmd_matriz ;;
+  corrida) shift; cmd_corrida "$@" ;;
+  *)       usage; exit 1 ;;
 esac
