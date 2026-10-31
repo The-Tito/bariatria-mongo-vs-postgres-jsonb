@@ -25,7 +25,7 @@ Sigue los entregables del playbook (8.1 repositorio y 8.2 CSV).
 | `benchmark_runner/` | Runner en Python multiproceso (lazo cerrado); verificador de equivalencia y planes de ejecución | ✅ |
 | `queries/` | Esquemas (validador `$jsonSchema`, DDL JSONB) e índices de ambos motores; Q1 y Q2 en MongoDB y SQL | ✅ |
 | `run_benchmarks.sh` | `check`, `piloto`, `matriz` (108 corridas por rondas, retomable) y `variantes` | ✅ |
-| `results/` | CSV con el esquema fijo, evidencia de spill/OOM, planes de ejecución, pilotos y variantes de memoria | 🔄 pilotos listos |
+| `results/` | CSV con el esquema fijo, evidencia de spill/OOM, planes de ejecución, pilotos y variantes de memoria | ✅ |
 
 ## Requisitos
 
@@ -73,6 +73,9 @@ La carga en MongoDB pasa por el validador `$jsonSchema`: si el archivo no cumple
 ./run_benchmarks.sh piloto      # celda piloto -> results/piloto/
 ./run_benchmarks.sh matriz      # 36 celdas x 3 repeticiones (~14 h) -> results/mediciones.csv
 ./run_benchmarks.sh variantes   # Q1 en PostgreSQL con work_mem de 64 MB (~3.5 h) -> results/variantes/
+
+python benchmark_runner/consolidar.py results            # mediana por celda y gráficas -> results/resumen/
+python benchmark_runner/consolidar.py results/variantes  # -> results/variantes/resumen/
 ```
 
 `matriz` y `variantes` se pueden interrumpir y volver a lanzar: saltan las corridas ya registradas.
