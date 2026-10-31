@@ -9,6 +9,8 @@ El generador produce cada visita una sola vez y la carga en los dos motores.
 | `mongo/indexes.json` | Índices de `visitas`, además del índice automático sobre `_id` |
 | `postgres/schema.sql` | Tabla `visitas (id uuid PRIMARY KEY, data jsonb)` |
 | `postgres/indexes.sql` | Índice de fecha y `VACUUM (ANALYZE)` |
+| `mongo/q1.json`, `postgres/q1.sql` | Q1 (P15): medicación crónica por año y fármaco |
+| `mongo/q2.json`, `postgres/q2.sql` | Q2 (P14): Top-1000 de visitas cerradas de 2026 por IMC |
 
 ## Procedimiento de carga (idéntico en ambos motores)
 
@@ -95,4 +97,17 @@ como `items` en el playbook.
 | `duracion_dias` | int | 1–365 |
 
 La dosis diaria es `dosis_mg × tomas_por_dia`, el equivalente a `qty × price` del playbook.
+
+## Equivalencia de Q1 y Q2
+
+Las dos versiones de cada consulta deben devolver exactamente lo mismo. `benchmark_runner/verificar.py`
+las ejecuta en ambos motores y compara fila por fila (resultado en `results/verificacion/resumen.json`).
+
+| Detalle | MongoDB | PostgreSQL |
+|---|---|---|
+| Año local | `$year` con `timezone: "-06:00"` | `AT TIME ZONE INTERVAL '-06:00'` |
+| Orden de cadenas | Por bytes (por defecto) | `COLLATE "C"` |
+| Tipos numéricos | `double` / `int` de BSON | `::float8` / `::int` (no `::numeric`) |
+| IMC faltante en Q2 | Queda al final en orden descendente | `NULLS LAST` |
+| Empates en Q2 | `_id` | `id` (mismo orden de bytes que el UUID de BSON) |
 

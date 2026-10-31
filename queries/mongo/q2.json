@@ -1,0 +1,9 @@
+[
+  { "$match": {
+      "estado": "cerrada",
+      "fecha": { "$gte": { "$date": "2026-01-01T06:00:00Z" }, "$lt": { "$date": "2027-01-01T06:00:00Z" } }
+  } },
+  { "$sort": { "resumen.imc": -1, "_id": 1 } },
+  { "$limit": 1000 },
+  { "$project": { "paciente_id": 1, "fecha": 1, "resumen.imc": 1, "resumen.peso_kg": 1 } }
+]
