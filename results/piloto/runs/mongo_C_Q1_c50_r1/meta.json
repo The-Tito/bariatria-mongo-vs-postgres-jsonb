@@ -30,7 +30,8 @@
     "running": true,
     "oom_killed": false,
     "exit_code": 0,
-    "started_at": "2026-10-31T06:20:48.488580546Z"
+    "started_at": "2026-10-31T06:20:48.488580546Z",
+    "id": "79d368219b4074c7796c73294b8e94ecd9765b7263be2f71f574b59b0513ae00"
   },
   "config_motor": {
     "version": "8.0.32",
@@ -129,5 +130,10 @@
     "max_rss_mb": 760.7,
     "disk_spill": "false",
     "status": "ok"
+  },
+  "recalculado": {
+    "fecha": 1793429739.1554508,
+    "max_rss_mb_anterior": 760.7,
+    "motivo": "series de cAdvisor mezcladas con las del contenedor anterior (filtro por nombre)"
   }
 }
