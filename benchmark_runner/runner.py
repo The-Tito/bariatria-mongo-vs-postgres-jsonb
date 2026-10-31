@@ -11,6 +11,8 @@ Ciclo (definido en results/README.md):
 
 Uso:
   python benchmark_runner/runner.py --engine postgres --profile C --query Q1 --concurrency 50 --run 1
+Variante de memoria (experimento complementario, solo PostgreSQL): --work-mem 64MB. La fila se registra con
+query_id "<consulta>_WM<n>" (p. ej., Q1_WM64) para que no se confunda con la configuración de fábrica.
 Opciones de prueba (no producen mediciones válidas): --salida DIR, --calentamiento S, --medicion S,
 --enfriamiento S.
 """
@@ -19,6 +21,7 @@ import csv
 import gzip
 import json
 import multiprocessing as mp
+import re
 import shutil
 import subprocess
 import threading
@@ -56,7 +59,7 @@ def compose(*args, env=None):
 # ---------------------------------------------------------------------------------------------------
 # Clientes
 
-def cliente(i, motor, qid, listo, inicio, t0_compartido, fin_carga, archivo):
+def cliente(i, motor, qid, work_mem, listo, inicio, t0_compartido, fin_carga, archivo):
     """Un cliente en lazo cerrado. Escribe una fila por consulta en su propio archivo."""
     if motor == "mongo":
         db = conectar_mongo()
@@ -65,7 +68,7 @@ def cliente(i, motor, qid, listo, inicio, t0_compartido, fin_carga, archivo):
         def ejecutar():
             return ejecutar_mongo(db, qid, TIMEOUT_CONSULTA_S)
     else:
-        con = conectar_postgres(TIMEOUT_CONSULTA_S)
+        con = conectar_postgres(TIMEOUT_CONSULTA_S, work_mem)
 
         def ejecutar():
             return ejecutar_postgres(con, qid)
@@ -85,7 +88,7 @@ def cliente(i, motor, qid, listo, inicio, t0_compartido, fin_carga, archivo):
                 resultado = f"{type(e).__name__}: {str(e).splitlines()[0][:200]}"
                 if motor == "postgres" and con.closed:
                     try:
-                        con = conectar_postgres(TIMEOUT_CONSULTA_S)
+                        con = conectar_postgres(TIMEOUT_CONSULTA_S, work_mem)
                     except Exception:
                         time.sleep(1)
             lat = (time.perf_counter() - p0) * 1000
@@ -199,13 +202,15 @@ def percentil(valores, p):
 
 def correr(a):
     perfil_id = PERFILES[a.profile][0]
-    run_id = f"{a.engine}_{a.profile}_{a.query}_c{a.concurrency}_r{a.run}"
+    query_id = f"{a.query}_WM{int(a.work_mem.upper().removesuffix('MB'))}" if a.work_mem else a.query
+    run_id = f"{a.engine}_{a.profile}_{query_id}_c{a.concurrency}_r{a.run}"
     salida = Path(a.salida) if a.salida else RAIZ / "results"
     carpeta = salida / "runs" / run_id
     if carpeta.exists():
         shutil.rmtree(carpeta)
     (carpeta / "clientes").mkdir(parents=True)
-    meta = {"id": run_id, "engine": a.engine, "profile": perfil_id, "query_id": a.query,
+    meta = {"id": run_id, "engine": a.engine, "profile": perfil_id, "query_id": query_id, "consulta": a.query,
+            "variante_work_mem": a.work_mem,
             "concurrency": a.concurrency, "run_number": a.run, "carga": "lazo cerrado",
             "duraciones_s": {"calentamiento": a.calentamiento, "medicion": a.medicion,
                              "enfriamiento": a.enfriamiento},
@@ -234,8 +239,8 @@ def correr(a):
     listo, inicio = ctx.Barrier(a.concurrency + 1), ctx.Event()
     t0_compartido = ctx.Value("d", 0.0)
     fin_carga = a.calentamiento + a.medicion
-    procesos = [ctx.Process(target=cliente, args=(i, a.engine, a.query, listo, inicio, t0_compartido, fin_carga,
-                                                  carpeta / "clientes" / f"{i}.csv"))
+    procesos = [ctx.Process(target=cliente, args=(i, a.engine, a.query, a.work_mem, listo, inicio, t0_compartido,
+                                                  fin_carga, carpeta / "clientes" / f"{i}.csv"))
                 for i in range(a.concurrency)]
     for p in procesos:
         p.start()
@@ -339,7 +344,7 @@ def correr(a):
     if disco["abortado"]:
         meta["motivo_error"] = "espacio libre del host por debajo del mínimo; se detuvo el motor"
 
-    fila = {"timestamp_epoch": int(ventana_ini), "engine": a.engine, "profile": perfil_id, "query_id": a.query,
+    fila = {"timestamp_epoch": int(ventana_ini), "engine": a.engine, "profile": perfil_id, "query_id": query_id,
             "concurrency": a.concurrency, "run_number": a.run,
             "throughput_qps": round(len(exitosas) / a.medicion, 4),
             "latency_p50_ms": round(percentil(exitosas, 50), 3) if exitosas else "",
@@ -375,11 +380,15 @@ def main():
     ap.add_argument("--query", choices=["Q1", "Q2"], required=True)
     ap.add_argument("--concurrency", type=int, required=True)
     ap.add_argument("--run", type=int, required=True)
+    ap.add_argument("--work-mem", help="Variante de memoria de PostgreSQL por sesión, p. ej. 64MB")
     ap.add_argument("--salida", help="Carpeta de salida en lugar de results/ (pruebas y piloto)")
     ap.add_argument("--calentamiento", type=float, default=60)
     ap.add_argument("--medicion", type=float, default=300)
     ap.add_argument("--enfriamiento", type=float, default=60)
-    correr(ap.parse_args())
+    a = ap.parse_args()
+    if a.work_mem and (a.engine != "postgres" or not re.fullmatch(r"\d+MB", a.work_mem, re.IGNORECASE)):
+        ap.error("--work-mem solo aplica a postgres y se expresa en MB, p. ej. 64MB")
+    correr(a)
 
 
 if __name__ == "__main__":
