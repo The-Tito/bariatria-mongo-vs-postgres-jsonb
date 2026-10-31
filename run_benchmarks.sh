@@ -8,7 +8,9 @@
 #   ./run_benchmarks.sh matriz    Matriz completa por rondas (repetición 1 de todas las celdas, luego 2
 #                                 y 3). Retoma donde se quedó: salta las corridas ya registradas en
 #                                 results/mediciones.csv.
-#   ./run_benchmarks.sh corrida <engine> <A|B|C> <Q1|Q2> <concurrencia> <repetición>
+#   ./run_benchmarks.sh variantes Experimento complementario: Q1 en PostgreSQL con work_mem de 64MB
+#                                 (27 corridas, por rondas) en results/variantes/.
+#   ./run_benchmarks.sh corrida <engine> <A|B|C> <Q1|Q2> <concurrencia> <repetición> [opciones del runner]
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -83,9 +85,9 @@ mantener_despierto() {
 
 perfil_id() { case "$1" in A) echo PROFILE_A_BASELINE ;; B) echo PROFILE_B_MEDIUM ;; C) echo PROFILE_C_SEVERE ;; esac; }
 
-registrada() {  # engine perfil consulta concurrencia repetición
-  [[ -f results/mediciones.csv ]] && awk -F, -v e="$1" -v p="$(perfil_id "$2")" -v q="$3" -v c="$4" -v r="$5" \
-    '$2==e && $3==p && $4==q && $5==c && $6==r {f=1} END {exit !f}' results/mediciones.csv
+registrada() {  # csv engine perfil query_id concurrencia repetición
+  [[ -f "$1" ]] && awk -F, -v e="$2" -v p="$(perfil_id "$3")" -v q="$4" -v c="$5" -v r="$6" \
+    '$2==e && $3==p && $4==q && $5==c && $6==r {f=1} END {exit !f}' "$1"
 }
 
 cmd_corrida() {
@@ -104,7 +106,7 @@ cmd_matriz() {
     for e in "${MOTORES[@]}"; do for p in "${PERFILES[@]}"; do for q in "${CONSULTAS[@]}"; do
       for c in "${CONCURRENCIAS[@]}"; do
         total=$((total + 1))
-        if registrada "$e" "$p" "$q" "$c" "$r"; then hechas=$((hechas + 1)); continue; fi
+        if registrada results/mediciones.csv "$e" "$p" "$q" "$c" "$r"; then hechas=$((hechas + 1)); continue; fi
         echo "== $(date '+%H:%M:%S') corrida $((hechas + 1)) de 108"
         cmd_corrida "$e" "$p" "$q" "$c" "$r"
         hechas=$((hechas + 1))
@@ -114,12 +116,26 @@ cmd_matriz() {
   echo "Matriz completa: $hechas de $total corridas en results/mediciones.csv"
 }
 
-usage() { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; }
+cmd_variantes() {
+  mantener_despierto
+  local hechas=0
+  for r in 1 2 3; do for p in "${PERFILES[@]}"; do for c in "${CONCURRENCIAS[@]}"; do
+    if ! registrada results/variantes/mediciones.csv postgres "$p" Q1_WM64 "$c" "$r"; then
+      echo "== $(date '+%H:%M:%S') variante $((hechas + 1)) de 27"
+      cmd_corrida postgres "$p" Q1 "$c" "$r" --work-mem 64MB --salida results/variantes
+    fi
+    hechas=$((hechas + 1))
+  done; done; done
+  echo "Variantes completas: $hechas de 27 corridas en results/variantes/mediciones.csv"
+}
+
+usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
 
 case "${1:-}" in
   check)   cmd_check | tee results/entorno.txt ;;
   piloto)  cmd_piloto ;;
   matriz)  cmd_matriz ;;
+  variantes) cmd_variantes ;;
   corrida) shift; cmd_corrida "$@" ;;
   *)       usage; exit 1 ;;
 esac
