@@ -30,11 +30,13 @@ def conectar_mongo():
     return MongoClient(MONGO_URI, uuidRepresentation="standard")[MONGO_DB]
 
 
-def conectar_postgres(timeout_s=None):
+def conectar_postgres(timeout_s=None, work_mem=None):
     import psycopg
     con = psycopg.connect(PG_DSN, autocommit=True)
     if timeout_s:
         con.execute(f"SET statement_timeout = '{int(timeout_s)}s'")
+    if work_mem:  # variante de memoria: solo para la sesión, como lo haría una aplicación con un reporte
+        con.execute(f"SET work_mem = '{work_mem}'")
     return con
 
 

@@ -5,6 +5,8 @@ Uso (un motor a la vez, como en las mediciones):
   python benchmark_runner/verificar.py ejecutar mongo       Resultados y explain de MongoDB
   python benchmark_runner/verificar.py ejecutar postgres    Resultados y EXPLAIN de PostgreSQL
   python benchmark_runner/verificar.py comparar             Compara y escribe results/verificacion/resumen.json
+  python benchmark_runner/verificar.py variantes mongo      Planes de Q1 y Q2 con allowDiskUse false y true
+  python benchmark_runner/verificar.py variantes postgres   Planes de Q1 y Q2 con work_mem de 4MB y 64MB
 """
 import json
 import math
@@ -49,6 +51,63 @@ def ejecutar(motor):
     (SALIDA / f"{motor}.json").write_text(json.dumps(salida, ensure_ascii=False) + "\n")
     for qid, r in salida["consultas"].items():
         print(f"{motor} {qid}: {len(r['filas'])} filas en {r['ms']} ms")
+
+
+VARIANTES = {"mongo": [("allowDiskUse_false", False), ("allowDiskUse_true", True)],
+             "postgres": [("work_mem_4MB", "4MB"), ("work_mem_64MB", "64MB")]}
+
+
+def etapas_mongo(plan):
+    """Etapas que ordenan o agrupan, con su memoria y si volcaron a disco."""
+    salida = []
+
+    def recorrer(o):
+        if isinstance(o, dict):
+            nombre = o.get("stage") or next((k for k in o if k in ("$group", "$sort")), None)
+            if nombre in ("SORT", "GROUP", "$group", "$sort"):
+                salida.append({"etapa": nombre, **{k: o[k] for k in ("usedDisk", "spills", "totalDataSizeSorted",
+                                                                       "totalDataSizeSortedBytesEstimate", "memLimit",
+                                                                       "maxAccumulatorMemoryUsageBytes") if k in o}})
+            for v in o.values():
+                recorrer(v)
+        elif isinstance(o, list):
+            for v in o:
+                recorrer(v)
+    recorrer(plan)
+    return salida
+
+
+def variantes(motor):
+    """Plan de ejecución de cada consulta con cada variante de memoria (playbook §5.2)."""
+    destino = EXPLAIN / "variantes"
+    destino.mkdir(parents=True, exist_ok=True)
+    resumen = {}
+    if motor == "mongo":
+        db = conectar_mongo()
+        for qid in CONSULTAS:
+            for nombre, permitir in VARIANTES["mongo"]:
+                try:
+                    plan = db.command("explain", {"aggregate": "visitas", "pipeline": pipeline(qid), "cursor": {},
+                                                  "allowDiskUse": permitir}, verbosity="executionStats")
+                    plan = json.loads(json_dumps(plan))
+                    resumen[f"{qid}_{nombre}"] = {"etapas": etapas_mongo(plan)}
+                except Exception as e:  # allowDiskUse:false falla si una etapa excede 100 MB
+                    plan = {"error": f"{type(e).__name__}: {e}"}
+                    resumen[f"{qid}_{nombre}"] = plan
+                (destino / f"mongo_{qid}_{nombre}.json").write_text(json.dumps(plan, indent=2) + "\n")
+    else:
+        for qid in CONSULTAS:
+            for nombre, wm in VARIANTES["postgres"]:
+                with conectar_postgres(work_mem=wm) as con:
+                    consulta = sql(qid).rstrip().rstrip(";")
+                    texto = [r[0] for r in con.execute(f"EXPLAIN (ANALYZE, BUFFERS, VERBOSE) {consulta}").fetchall()]
+                (destino / f"postgres_{qid}_{nombre}.txt").write_text("\n".join(texto) + "\n")
+                resumen[f"{qid}_{nombre}"] = {"lineas_clave": [l.strip() for l in texto if any(
+                    k in l for k in ("Sort Method", "Batches", "Disk:", "Execution Time", "HashAggregate",
+                                     "GroupAggregate", "temp read"))]}
+    (destino / f"resumen_{motor}.json").write_text(json.dumps(resumen, ensure_ascii=False, indent=2) + "\n")
+    for k, v in resumen.items():
+        print(k, json.dumps(v, ensure_ascii=False)[:300])
 
 
 def json_dumps(doc):
@@ -96,6 +155,8 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) == 2 and args[0] == "ejecutar" and args[1] in ("mongo", "postgres"):
         ejecutar(args[1])
+    elif len(args) == 2 and args[0] == "variantes" and args[1] in ("mongo", "postgres"):
+        variantes(args[1])
     elif args == ["comparar"]:
         comparar()
     else:
