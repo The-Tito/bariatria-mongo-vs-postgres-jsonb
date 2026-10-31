@@ -114,7 +114,7 @@ cmd_matriz() {
   echo "Matriz completa: $hechas de $total corridas en results/mediciones.csv"
 }
 
-usage() { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; }
 
 case "${1:-}" in
   check)   cmd_check | tee results/entorno.txt ;;
