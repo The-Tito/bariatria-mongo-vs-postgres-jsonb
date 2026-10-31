@@ -10,8 +10,6 @@ __pycache__/
 # Dataset generado: se reproduce con el generador y su semilla
 data/
 
-# Resultados crudos de corridas locales (el CSV consolidado sí se versiona)
-results/raw/
 
 # Sistema operativo y editores
 .DS_Store
