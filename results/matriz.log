@@ -1,0 +1,541 @@
+== 00:50:55 corrida 1 de 108
+[mongo_A_Q1_c1_r1] preparando motor y limpiando caché
+[mongo_A_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c1_r1] enfriamiento 60 s
+[mongo_A_Q1_c1_r1] ok: 326 consultas en la ventana, QPS 1.0867, P99 970.865 ms, throttling 0.0 s, RSS máx 978.4 MiB, spill false
+== 00:58:04 corrida 2 de 108
+[mongo_A_Q1_c10_r1] preparando motor y limpiando caché
+[mongo_A_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c10_r1] enfriamiento 60 s
+[mongo_A_Q1_c10_r1] ok: 930 consultas en la ventana, QPS 3.1, P99 3480.317 ms, throttling 1810.814 s, RSS máx 1032.2 MiB, spill false
+== 01:05:15 corrida 3 de 108
+[mongo_A_Q1_c50_r1] preparando motor y limpiando caché
+[mongo_A_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c50_r1] enfriamiento 60 s
+[mongo_A_Q1_c50_r1] ok: 803 consultas en la ventana, QPS 2.6767, P99 20795.929 ms, throttling 2346.256 s, RSS máx 1212.4 MiB, spill false
+== 01:12:35 corrida 4 de 108
+[mongo_A_Q2_c1_r1] preparando motor y limpiando caché
+[mongo_A_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c1_r1] enfriamiento 60 s
+[mongo_A_Q2_c1_r1] ok: 6709 consultas en la ventana, QPS 22.3633, P99 48.529 ms, throttling 0.0 s, RSS máx 373.8 MiB, spill false
+== 01:19:44 corrida 5 de 108
+[mongo_A_Q2_c10_r1] preparando motor y limpiando caché
+[mongo_A_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c10_r1] enfriamiento 60 s
+[mongo_A_Q2_c10_r1] ok: 17639 consultas en la ventana, QPS 58.7967, P99 211.432 ms, throttling 1616.809 s, RSS máx 411.3 MiB, spill false
+== 01:26:53 corrida 6 de 108
+[mongo_A_Q2_c50_r1] preparando motor y limpiando caché
+[mongo_A_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c50_r1] enfriamiento 60 s
+[mongo_A_Q2_c50_r1] ok: 12917 consultas en la ventana, QPS 43.0567, P99 2212.811 ms, throttling 2374.428 s, RSS máx 504.5 MiB, spill false
+== 01:34:03 corrida 7 de 108
+[mongo_B_Q1_c1_r1] preparando motor y limpiando caché
+[mongo_B_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c1_r1] enfriamiento 60 s
+[mongo_B_Q1_c1_r1] ok: 305 consultas en la ventana, QPS 1.0167, P99 1018.301 ms, throttling 1.55 s, RSS máx 794.6 MiB, spill false
+== 01:41:13 corrida 8 de 108
+[mongo_B_Q1_c10_r1] preparando motor y limpiando caché
+[mongo_B_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c10_r1] enfriamiento 60 s
+[mongo_B_Q1_c10_r1] ok: 320 consultas en la ventana, QPS 1.0667, P99 9694.242 ms, throttling 2454.14 s, RSS máx 852.8 MiB, spill false
+== 01:48:26 corrida 9 de 108
+[mongo_B_Q1_c50_r1] preparando motor y limpiando caché
+[mongo_B_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c50_r1] enfriamiento 60 s
+[mongo_B_Q1_c50_r1] ok: 263 consultas en la ventana, QPS 0.8767, P99 58199.645 ms, throttling 2940.623 s, RSS máx 1005.8 MiB, spill false
+== 01:55:52 corrida 10 de 108
+[mongo_B_Q2_c1_r1] preparando motor y limpiando caché
+[mongo_B_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c1_r1] enfriamiento 60 s
+[mongo_B_Q2_c1_r1] ok: 6775 consultas en la ventana, QPS 22.5833, P99 48.847 ms, throttling 0.017 s, RSS máx 354.0 MiB, spill false
+== 02:03:01 corrida 11 de 108
+[mongo_B_Q2_c10_r1] preparando motor y limpiando caché
+[mongo_B_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c10_r1] enfriamiento 60 s
+[mongo_B_Q2_c10_r1] ok: 6586 consultas en la ventana, QPS 21.9533, P99 605.827 ms, throttling 2333.904 s, RSS máx 405.8 MiB, spill false
+== 02:10:10 corrida 12 de 108
+[mongo_B_Q2_c50_r1] preparando motor y limpiando caché
+[mongo_B_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c50_r1] enfriamiento 60 s
+[mongo_B_Q2_c50_r1] ok: 4901 consultas en la ventana, QPS 16.3367, P99 5802.014 ms, throttling 2990.318 s, RSS máx 483.9 MiB, spill false
+== 02:17:21 corrida 13 de 108
+[mongo_C_Q1_c1_r1] preparando motor y limpiando caché
+[mongo_C_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c1_r1] enfriamiento 60 s
+[mongo_C_Q1_c1_r1] ok: 274 consultas en la ventana, QPS 0.9133, P99 1329.707 ms, throttling 42.091 s, RSS máx 567.8 MiB, spill false
+== 02:24:30 corrida 14 de 108
+[mongo_C_Q1_c10_r1] preparando motor y limpiando caché
+[mongo_C_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c10_r1] enfriamiento 60 s
+[mongo_C_Q1_c10_r1] ok: 140 consultas en la ventana, QPS 0.4667, P99 23310.948 ms, throttling 2800.692 s, RSS máx 609.7 MiB, spill false
+== 02:31:57 corrida 15 de 108
+[mongo_C_Q1_c50_r1] preparando motor y limpiando caché
+[mongo_C_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c50_r1] enfriamiento 60 s
+[mongo_C_Q1_c50_r1] ok: 144 consultas en la ventana, QPS 0.48, P99 129307.915 ms, throttling 3226.844 s, RSS máx 761.5 MiB, spill false
+== 02:40:35 corrida 16 de 108
+[mongo_C_Q2_c1_r1] preparando motor y limpiando caché
+[mongo_C_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c1_r1] enfriamiento 60 s
+[mongo_C_Q2_c1_r1] ok: 6617 consultas en la ventana, QPS 22.0567, P99 101.018 ms, throttling 19.756 s, RSS máx 366.2 MiB, spill false
+== 02:47:44 corrida 17 de 108
+[mongo_C_Q2_c10_r1] preparando motor y limpiando caché
+[mongo_C_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c10_r1] enfriamiento 60 s
+[mongo_C_Q2_c10_r1] ok: 2723 consultas en la ventana, QPS 9.0767, P99 1410.925 ms, throttling 2727.663 s, RSS máx 400.3 MiB, spill false
+== 02:54:54 corrida 18 de 108
+[mongo_C_Q2_c50_r1] preparando motor y limpiando caché
+[mongo_C_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c50_r1] enfriamiento 60 s
+[mongo_C_Q2_c50_r1] ok: 2334 consultas en la ventana, QPS 7.78, P99 12694.522 ms, throttling 3300.73 s, RSS máx 468.0 MiB, spill false
+== 03:02:07 corrida 19 de 108
+[postgres_A_Q1_c1_r1] preparando motor y limpiando caché
+[postgres_A_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c1_r1] enfriamiento 60 s
+[postgres_A_Q1_c1_r1] spill: 163 consultas en la ventana, QPS 0.5433, P99 2596.227 ms, throttling 0.0 s, RSS máx 113.6 MiB, spill true
+== 03:09:16 corrida 20 de 108
+[postgres_A_Q1_c10_r1] preparando motor y limpiando caché
+[postgres_A_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c10_r1] enfriamiento 60 s
+[postgres_A_Q1_c10_r1] spill: 166 consultas en la ventana, QPS 0.5533, P99 26399.724 ms, throttling 609.285 s, RSS máx 604.0 MiB, spill true
+== 03:16:29 corrida 21 de 108
+[postgres_A_Q1_c50_r1] preparando motor y limpiando caché
+[postgres_A_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c50_r1] enfriamiento 60 s
+[postgres_A_Q1_c50_r1] spill: 58 consultas en la ventana, QPS 0.1933, P99 230821.205 ms, throttling 210.784 s, RSS máx 2078.0 MiB, spill true
+== 03:25:56 corrida 22 de 108
+[postgres_A_Q2_c1_r1] preparando motor y limpiando caché
+[postgres_A_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c1_r1] enfriamiento 60 s
+[postgres_A_Q2_c1_r1] ok: 3509 consultas en la ventana, QPS 11.6967, P99 89.672 ms, throttling 0.0 s, RSS máx 10.3 MiB, spill false
+== 03:33:04 corrida 23 de 108
+[postgres_A_Q2_c10_r1] preparando motor y limpiando caché
+[postgres_A_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c10_r1] enfriamiento 60 s
+[postgres_A_Q2_c10_r1] ok: 11505 consultas en la ventana, QPS 38.35, P99 306.526 ms, throttling 1749.686 s, RSS máx 27.8 MiB, spill false
+== 03:40:13 corrida 24 de 108
+[postgres_A_Q2_c50_r1] preparando motor y limpiando caché
+[postgres_A_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c50_r1] enfriamiento 60 s
+[postgres_A_Q2_c50_r1] ok: 9811 consultas en la ventana, QPS 32.7033, P99 2892.318 ms, throttling 2384.917 s, RSS máx 107.0 MiB, spill false
+== 03:47:22 corrida 25 de 108
+[postgres_B_Q1_c1_r1] preparando motor y limpiando caché
+[postgres_B_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c1_r1] enfriamiento 60 s
+[postgres_B_Q1_c1_r1] spill: 126 consultas en la ventana, QPS 0.42, P99 3749.329 ms, throttling 89.178 s, RSS máx 114.1 MiB, spill true
+== 03:54:31 corrida 26 de 108
+[postgres_B_Q1_c10_r1] preparando motor y limpiando caché
+[postgres_B_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c10_r1] enfriamiento 60 s
+[postgres_B_Q1_c10_r1] spill: 115 consultas en la ventana, QPS 0.3833, P99 33192.351 ms, throttling 1617.159 s, RSS máx 600.7 MiB, spill true
+== 04:01:53 corrida 27 de 108
+[postgres_B_Q1_c50_r1] preparando motor y limpiando caché
+[postgres_B_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c50_r1] enfriamiento 60 s
+[postgres_B_Q1_c50_r1] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 1796.84 s, RSS máx 1835.5 MiB, spill false
+== 04:12:13 corrida 28 de 108
+[postgres_B_Q2_c1_r1] preparando motor y limpiando caché
+[postgres_B_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c1_r1] enfriamiento 60 s
+[postgres_B_Q2_c1_r1] ok: 3508 consultas en la ventana, QPS 11.6933, P99 89.741 ms, throttling 0.0 s, RSS máx 15.3 MiB, spill false
+== 04:19:21 corrida 29 de 108
+[postgres_B_Q2_c10_r1] preparando motor y limpiando caché
+[postgres_B_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c10_r1] enfriamiento 60 s
+[postgres_B_Q2_c10_r1] ok: 4258 consultas en la ventana, QPS 14.1933, P99 808.357 ms, throttling 2374.647 s, RSS máx 29.8 MiB, spill false
+== 04:26:30 corrida 30 de 108
+[postgres_B_Q2_c50_r1] preparando motor y limpiando caché
+[postgres_B_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c50_r1] enfriamiento 60 s
+[postgres_B_Q2_c50_r1] ok: 3566 consultas en la ventana, QPS 11.8867, P99 8296.887 ms, throttling 2986.368 s, RSS máx 109.3 MiB, spill false
+== 04:33:41 corrida 31 de 108
+[postgres_C_Q1_c1_r1] preparando motor y limpiando caché
+[postgres_C_Q1_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c1_r1] enfriamiento 60 s
+[postgres_C_Q1_c1_r1] spill: 79 consultas en la ventana, QPS 0.2633, P99 5527.425 ms, throttling 345.2 s, RSS máx 107.9 MiB, spill true
+== 04:40:50 corrida 32 de 108
+[postgres_C_Q1_c10_r1] preparando motor y limpiando caché
+[postgres_C_Q1_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c10_r1] enfriamiento 60 s
+[postgres_C_Q1_c10_r1] spill: 41 consultas en la ventana, QPS 0.1367, P99 87705.945 ms, throttling 2215.384 s, RSS máx 597.2 MiB, spill true
+== 04:48:29 corrida 33 de 108
+[postgres_C_Q1_c50_r1] preparando motor y limpiando caché
+[postgres_C_Q1_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c50_r1] enfriamiento 60 s
+[postgres_C_Q1_c50_r1] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 2877.256 s, RSS máx 956.7 MiB, spill 
+== 04:55:38 corrida 34 de 108
+[postgres_C_Q2_c1_r1] preparando motor y limpiando caché
+[postgres_C_Q2_c1_r1] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c1_r1] enfriamiento 60 s
+[postgres_C_Q2_c1_r1] ok: 3593 consultas en la ventana, QPS 11.9767, P99 94.362 ms, throttling 1.608 s, RSS máx 13.0 MiB, spill false
+== 05:02:46 corrida 35 de 108
+[postgres_C_Q2_c10_r1] preparando motor y limpiando caché
+[postgres_C_Q2_c10_r1] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c10_r1] enfriamiento 60 s
+[postgres_C_Q2_c10_r1] ok: 1663 consultas en la ventana, QPS 5.5433, P99 2185.606 ms, throttling 2695.277 s, RSS máx 30.3 MiB, spill false
+== 05:09:56 corrida 36 de 108
+[postgres_C_Q2_c50_r1] preparando motor y limpiando caché
+[postgres_C_Q2_c50_r1] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c50_r1] enfriamiento 60 s
+[postgres_C_Q2_c50_r1] ok: 1482 consultas en la ventana, QPS 4.94, P99 24100.147 ms, throttling 3298.749 s, RSS máx 109.3 MiB, spill false
+== 05:17:09 corrida 37 de 108
+[mongo_A_Q1_c1_r2] preparando motor y limpiando caché
+[mongo_A_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c1_r2] enfriamiento 60 s
+[mongo_A_Q1_c1_r2] ok: 337 consultas en la ventana, QPS 1.1233, P99 909.253 ms, throttling 0.0 s, RSS máx 975.6 MiB, spill false
+== 05:24:18 corrida 38 de 108
+[mongo_A_Q1_c10_r2] preparando motor y limpiando caché
+[mongo_A_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c10_r2] enfriamiento 60 s
+[mongo_A_Q1_c10_r2] ok: 937 consultas en la ventana, QPS 3.1233, P99 3418.918 ms, throttling 1811.304 s, RSS máx 1035.6 MiB, spill false
+== 05:31:29 corrida 39 de 108
+[mongo_A_Q1_c50_r2] preparando motor y limpiando caché
+[mongo_A_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c50_r2] enfriamiento 60 s
+[mongo_A_Q1_c50_r2] ok: 801 consultas en la ventana, QPS 2.67, P99 20591.243 ms, throttling 2344.239 s, RSS máx 1217.8 MiB, spill false
+== 05:38:50 corrida 40 de 108
+[mongo_A_Q2_c1_r2] preparando motor y limpiando caché
+[mongo_A_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c1_r2] enfriamiento 60 s
+[mongo_A_Q2_c1_r2] ok: 6734 consultas en la ventana, QPS 22.4467, P99 48.589 ms, throttling 0.0 s, RSS máx 372.0 MiB, spill false
+== 05:45:59 corrida 41 de 108
+[mongo_A_Q2_c10_r2] preparando motor y limpiando caché
+[mongo_A_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c10_r2] enfriamiento 60 s
+[mongo_A_Q2_c10_r2] ok: 18011 consultas en la ventana, QPS 60.0367, P99 214.912 ms, throttling 1542.428 s, RSS máx 406.5 MiB, spill false
+== 05:53:08 corrida 42 de 108
+[mongo_A_Q2_c50_r2] preparando motor y limpiando caché
+[mongo_A_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c50_r2] enfriamiento 60 s
+[mongo_A_Q2_c50_r2] ok: 12534 consultas en la ventana, QPS 41.78, P99 2384.98 ms, throttling 2371.142 s, RSS máx 502.8 MiB, spill false
+== 06:00:18 corrida 43 de 108
+[mongo_B_Q1_c1_r2] preparando motor y limpiando caché
+[mongo_B_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c1_r2] enfriamiento 60 s
+[mongo_B_Q1_c1_r2] ok: 305 consultas en la ventana, QPS 1.0167, P99 1023.267 ms, throttling 1.558 s, RSS máx 799.5 MiB, spill false
+== 06:07:28 corrida 44 de 108
+[mongo_B_Q1_c10_r2] preparando motor y limpiando caché
+[mongo_B_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c10_r2] enfriamiento 60 s
+[mongo_B_Q1_c10_r2] ok: 330 consultas en la ventana, QPS 1.1, P99 9590.021 ms, throttling 2450.345 s, RSS máx 854.6 MiB, spill false
+== 06:14:42 corrida 45 de 108
+[mongo_B_Q1_c50_r2] preparando motor y limpiando caché
+[mongo_B_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c50_r2] enfriamiento 60 s
+[mongo_B_Q1_c50_r2] ok: 292 consultas en la ventana, QPS 0.9733, P99 58288.809 ms, throttling 2944.418 s, RSS máx 1027.8 MiB, spill false
+== 06:22:26 corrida 46 de 108
+[mongo_B_Q2_c1_r2] preparando motor y limpiando caché
+[mongo_B_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c1_r2] enfriamiento 60 s
+[mongo_B_Q2_c1_r2] ok: 6797 consultas en la ventana, QPS 22.6567, P99 48.574 ms, throttling 0.045 s, RSS máx 356.2 MiB, spill false
+== 06:29:36 corrida 47 de 108
+[mongo_B_Q2_c10_r2] preparando motor y limpiando caché
+[mongo_B_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c10_r2] enfriamiento 60 s
+[mongo_B_Q2_c10_r2] ok: 6638 consultas en la ventana, QPS 22.1267, P99 605.583 ms, throttling 2328.359 s, RSS máx 413.3 MiB, spill false
+== 06:36:45 corrida 48 de 108
+[mongo_B_Q2_c50_r2] preparando motor y limpiando caché
+[mongo_B_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c50_r2] enfriamiento 60 s
+[mongo_B_Q2_c50_r2] ok: 5004 consultas en la ventana, QPS 16.68, P99 6007.427 ms, throttling 2991.568 s, RSS máx 487.4 MiB, spill false
+== 06:43:56 corrida 49 de 108
+[mongo_C_Q1_c1_r2] preparando motor y limpiando caché
+[mongo_C_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c1_r2] enfriamiento 60 s
+[mongo_C_Q1_c1_r2] ok: 276 consultas en la ventana, QPS 0.92, P99 1323.154 ms, throttling 41.835 s, RSS máx 561.4 MiB, spill false
+== 06:51:06 corrida 50 de 108
+[mongo_C_Q1_c10_r2] preparando motor y limpiando caché
+[mongo_C_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c10_r2] enfriamiento 60 s
+[mongo_C_Q1_c10_r2] ok: 130 consultas en la ventana, QPS 0.4333, P99 23898.392 ms, throttling 2810.214 s, RSS máx 619.1 MiB, spill false
+== 06:58:16 corrida 51 de 108
+[mongo_C_Q1_c50_r2] preparando motor y limpiando caché
+[mongo_C_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c50_r2] enfriamiento 60 s
+[mongo_C_Q1_c50_r2] ok: 142 consultas en la ventana, QPS 0.4733, P99 128982.105 ms, throttling 3227.072 s, RSS máx 756.8 MiB, spill false
+== 07:06:52 corrida 52 de 108
+[mongo_C_Q2_c1_r2] preparando motor y limpiando caché
+[mongo_C_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c1_r2] enfriamiento 60 s
+[mongo_C_Q2_c1_r2] ok: 6596 consultas en la ventana, QPS 21.9867, P99 101.305 ms, throttling 20.267 s, RSS máx 366.4 MiB, spill false
+== 07:14:01 corrida 53 de 108
+[mongo_C_Q2_c10_r2] preparando motor y limpiando caché
+[mongo_C_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c10_r2] enfriamiento 60 s
+[mongo_C_Q2_c10_r2] ok: 2783 consultas en la ventana, QPS 9.2767, P99 1405.543 ms, throttling 2737.008 s, RSS máx 407.1 MiB, spill false
+== 07:21:11 corrida 54 de 108
+[mongo_C_Q2_c50_r2] preparando motor y limpiando caché
+[mongo_C_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c50_r2] enfriamiento 60 s
+[mongo_C_Q2_c50_r2] ok: 2425 consultas en la ventana, QPS 8.0833, P99 13807.871 ms, throttling 3284.857 s, RSS máx 469.1 MiB, spill false
+== 07:28:24 corrida 55 de 108
+[postgres_A_Q1_c1_r2] preparando motor y limpiando caché
+[postgres_A_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c1_r2] enfriamiento 60 s
+[postgres_A_Q1_c1_r2] spill: 164 consultas en la ventana, QPS 0.5467, P99 2492.052 ms, throttling 0.0 s, RSS máx 111.9 MiB, spill true
+== 07:35:34 corrida 56 de 108
+[postgres_A_Q1_c10_r2] preparando motor y limpiando caché
+[postgres_A_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c10_r2] enfriamiento 60 s
+[postgres_A_Q1_c10_r2] spill: 196 consultas en la ventana, QPS 0.6533, P99 24313.566 ms, throttling 746.653 s, RSS máx 606.3 MiB, spill true
+== 07:42:45 corrida 57 de 108
+[postgres_A_Q1_c50_r2] preparando motor y limpiando caché
+[postgres_A_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c50_r2] enfriamiento 60 s
+[postgres_A_Q1_c50_r2] spill: 58 consultas en la ventana, QPS 0.1933, P99 180790.924 ms, throttling 193.412 s, RSS máx 2082.0 MiB, spill true
+== 07:51:01 corrida 58 de 108
+[postgres_A_Q2_c1_r2] preparando motor y limpiando caché
+[postgres_A_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c1_r2] enfriamiento 60 s
+[postgres_A_Q2_c1_r2] ok: 3517 consultas en la ventana, QPS 11.7233, P99 89.324 ms, throttling 0.0 s, RSS máx 16.0 MiB, spill false
+== 07:58:09 corrida 59 de 108
+[postgres_A_Q2_c10_r2] preparando motor y limpiando caché
+[postgres_A_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c10_r2] enfriamiento 60 s
+[postgres_A_Q2_c10_r2] ok: 11503 consultas en la ventana, QPS 38.3433, P99 305.129 ms, throttling 1750.27 s, RSS máx 28.2 MiB, spill false
+== 08:05:17 corrida 60 de 108
+[postgres_A_Q2_c50_r2] preparando motor y limpiando caché
+[postgres_A_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c50_r2] enfriamiento 60 s
+[postgres_A_Q2_c50_r2] ok: 9859 consultas en la ventana, QPS 32.8633, P99 2878.928 ms, throttling 2390.151 s, RSS máx 107.9 MiB, spill false
+== 08:12:27 corrida 61 de 108
+[postgres_B_Q1_c1_r2] preparando motor y limpiando caché
+[postgres_B_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c1_r2] enfriamiento 60 s
+[postgres_B_Q1_c1_r2] spill: 124 consultas en la ventana, QPS 0.4133, P99 3467.181 ms, throttling 89.638 s, RSS máx 108.2 MiB, spill true
+== 08:19:36 corrida 62 de 108
+[postgres_B_Q1_c10_r2] preparando motor y limpiando caché
+[postgres_B_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c10_r2] enfriamiento 60 s
+[postgres_B_Q1_c10_r2] spill: 111 consultas en la ventana, QPS 0.37, P99 33608.441 ms, throttling 1618.361 s, RSS máx 601.8 MiB, spill true
+== 08:26:58 corrida 63 de 108
+[postgres_B_Q1_c50_r2] preparando motor y limpiando caché
+[postgres_B_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c50_r2] enfriamiento 60 s
+[postgres_B_Q1_c50_r2] oom: 4 consultas en la ventana, QPS 0.0133, P99 46191.391 ms, throttling 1827.963 s, RSS máx 1834.3 MiB, spill true
+== 08:34:24 corrida 64 de 108
+[postgres_B_Q2_c1_r2] preparando motor y limpiando caché
+[postgres_B_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c1_r2] enfriamiento 60 s
+[postgres_B_Q2_c1_r2] ok: 3544 consultas en la ventana, QPS 11.8133, P99 88.568 ms, throttling 0.0 s, RSS máx 12.9 MiB, spill false
+== 08:41:32 corrida 65 de 108
+[postgres_B_Q2_c10_r2] preparando motor y limpiando caché
+[postgres_B_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c10_r2] enfriamiento 60 s
+[postgres_B_Q2_c10_r2] ok: 4145 consultas en la ventana, QPS 13.8167, P99 883.317 ms, throttling 2376.775 s, RSS máx 31.1 MiB, spill false
+== 08:48:41 corrida 66 de 108
+[postgres_B_Q2_c50_r2] preparando motor y limpiando caché
+[postgres_B_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c50_r2] enfriamiento 60 s
+[postgres_B_Q2_c50_r2] ok: 3571 consultas en la ventana, QPS 11.9033, P99 8784.997 ms, throttling 2987.518 s, RSS máx 108.4 MiB, spill false
+== 08:55:52 corrida 67 de 108
+[postgres_C_Q1_c1_r2] preparando motor y limpiando caché
+[postgres_C_Q1_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c1_r2] enfriamiento 60 s
+[postgres_C_Q1_c1_r2] spill: 80 consultas en la ventana, QPS 0.2667, P99 5478.871 ms, throttling 342.853 s, RSS máx 108.0 MiB, spill true
+== 09:03:03 corrida 68 de 108
+[postgres_C_Q1_c10_r2] preparando motor y limpiando caché
+[postgres_C_Q1_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c10_r2] enfriamiento 60 s
+[postgres_C_Q1_c10_r2] spill: 40 consultas en la ventana, QPS 0.1333, P99 92606.969 ms, throttling 2220.811 s, RSS máx 594.2 MiB, spill true
+== 09:10:54 corrida 69 de 108
+[postgres_C_Q1_c50_r2] preparando motor y limpiando caché
+[postgres_C_Q1_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c50_r2] enfriamiento 60 s
+[postgres_C_Q1_c50_r2] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 3211.822 s, RSS máx 957.1 MiB, spill 
+== 09:18:10 corrida 70 de 108
+[postgres_C_Q2_c1_r2] preparando motor y limpiando caché
+[postgres_C_Q2_c1_r2] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c1_r2] enfriamiento 60 s
+[postgres_C_Q2_c1_r2] ok: 3524 consultas en la ventana, QPS 11.7467, P99 98.475 ms, throttling 0.791 s, RSS máx 11.0 MiB, spill false
+== 09:25:18 corrida 71 de 108
+[postgres_C_Q2_c10_r2] preparando motor y limpiando caché
+[postgres_C_Q2_c10_r2] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c10_r2] enfriamiento 60 s
+[postgres_C_Q2_c10_r2] ok: 1704 consultas en la ventana, QPS 5.68, P99 2108.866 ms, throttling 2695.704 s, RSS máx 30.5 MiB, spill false
+== 09:32:27 corrida 72 de 108
+[postgres_C_Q2_c50_r2] preparando motor y limpiando caché
+[postgres_C_Q2_c50_r2] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c50_r2] enfriamiento 60 s
+[postgres_C_Q2_c50_r2] ok: 1521 consultas en la ventana, QPS 5.07, P99 20104.727 ms, throttling 3280.739 s, RSS máx 109.2 MiB, spill false
+== 09:39:41 corrida 73 de 108
+[mongo_A_Q1_c1_r3] preparando motor y limpiando caché
+[mongo_A_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c1_r3] enfriamiento 60 s
+[mongo_A_Q1_c1_r3] ok: 335 consultas en la ventana, QPS 1.1167, P99 914.5 ms, throttling 0.0 s, RSS máx 976.6 MiB, spill false
+== 09:46:51 corrida 74 de 108
+[mongo_A_Q1_c10_r3] preparando motor y limpiando caché
+[mongo_A_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c10_r3] enfriamiento 60 s
+[mongo_A_Q1_c10_r3] ok: 936 consultas en la ventana, QPS 3.12, P99 3410.982 ms, throttling 1811.408 s, RSS máx 1039.6 MiB, spill false
+== 09:54:01 corrida 75 de 108
+[mongo_A_Q1_c50_r3] preparando motor y limpiando caché
+[mongo_A_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q1_c50_r3] enfriamiento 60 s
+[mongo_A_Q1_c50_r3] ok: 800 consultas en la ventana, QPS 2.6667, P99 20911.438 ms, throttling 2341.726 s, RSS máx 1216.0 MiB, spill false
+== 10:01:22 corrida 76 de 108
+[mongo_A_Q2_c1_r3] preparando motor y limpiando caché
+[mongo_A_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c1_r3] enfriamiento 60 s
+[mongo_A_Q2_c1_r3] ok: 6719 consultas en la ventana, QPS 22.3967, P99 48.684 ms, throttling 0.0 s, RSS máx 364.4 MiB, spill false
+== 10:08:31 corrida 77 de 108
+[mongo_A_Q2_c10_r3] preparando motor y limpiando caché
+[mongo_A_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c10_r3] enfriamiento 60 s
+[mongo_A_Q2_c10_r3] ok: 17813 consultas en la ventana, QPS 59.3767, P99 208.973 ms, throttling 1616.083 s, RSS máx 424.4 MiB, spill false
+== 10:15:40 corrida 78 de 108
+[mongo_A_Q2_c50_r3] preparando motor y limpiando caché
+[mongo_A_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_A_Q2_c50_r3] enfriamiento 60 s
+[mongo_A_Q2_c50_r3] ok: 12539 consultas en la ventana, QPS 41.7967, P99 2408.792 ms, throttling 2370.57 s, RSS máx 501.4 MiB, spill false
+== 10:22:50 corrida 79 de 108
+[mongo_B_Q1_c1_r3] preparando motor y limpiando caché
+[mongo_B_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c1_r3] enfriamiento 60 s
+[mongo_B_Q1_c1_r3] ok: 304 consultas en la ventana, QPS 1.0133, P99 1020.963 ms, throttling 1.77 s, RSS máx 809.0 MiB, spill false
+== 10:30:00 corrida 80 de 108
+[mongo_B_Q1_c10_r3] preparando motor y limpiando caché
+[mongo_B_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c10_r3] enfriamiento 60 s
+[mongo_B_Q1_c10_r3] ok: 320 consultas en la ventana, QPS 1.0667, P99 9703.119 ms, throttling 2450.355 s, RSS máx 857.2 MiB, spill false
+== 10:37:11 corrida 81 de 108
+[mongo_B_Q1_c50_r3] preparando motor y limpiando caché
+[mongo_B_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q1_c50_r3] enfriamiento 60 s
+[mongo_B_Q1_c50_r3] ok: 290 consultas en la ventana, QPS 0.9667, P99 56107.002 ms, throttling 2959.769 s, RSS máx 1017.2 MiB, spill false
+== 10:44:54 corrida 82 de 108
+[mongo_B_Q2_c1_r3] preparando motor y limpiando caché
+[mongo_B_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c1_r3] enfriamiento 60 s
+[mongo_B_Q2_c1_r3] ok: 6758 consultas en la ventana, QPS 22.5267, P99 48.826 ms, throttling 0.049 s, RSS máx 369.6 MiB, spill false
+== 10:52:03 corrida 83 de 108
+[mongo_B_Q2_c10_r3] preparando motor y limpiando caché
+[mongo_B_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c10_r3] enfriamiento 60 s
+[mongo_B_Q2_c10_r3] ok: 6569 consultas en la ventana, QPS 21.8967, P99 608.452 ms, throttling 2325.032 s, RSS máx 416.9 MiB, spill false
+== 10:59:13 corrida 84 de 108
+[mongo_B_Q2_c50_r3] preparando motor y limpiando caché
+[mongo_B_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_B_Q2_c50_r3] enfriamiento 60 s
+[mongo_B_Q2_c50_r3] ok: 4683 consultas en la ventana, QPS 15.61, P99 6406.158 ms, throttling 2989.522 s, RSS máx 485.1 MiB, spill false
+== 11:06:24 corrida 85 de 108
+[mongo_C_Q1_c1_r3] preparando motor y limpiando caché
+[mongo_C_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c1_r3] enfriamiento 60 s
+[mongo_C_Q1_c1_r3] ok: 274 consultas en la ventana, QPS 0.9133, P99 1338.277 ms, throttling 41.829 s, RSS máx 570.7 MiB, spill false
+== 11:13:34 corrida 86 de 108
+[mongo_C_Q1_c10_r3] preparando motor y limpiando caché
+[mongo_C_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c10_r3] enfriamiento 60 s
+[mongo_C_Q1_c10_r3] ok: 128 consultas en la ventana, QPS 0.4267, P99 26001.844 ms, throttling 2813.008 s, RSS máx 633.0 MiB, spill false
+== 11:20:48 corrida 87 de 108
+[mongo_C_Q1_c50_r3] preparando motor y limpiando caché
+[mongo_C_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q1_c50_r3] enfriamiento 60 s
+[mongo_C_Q1_c50_r3] ok: 145 consultas en la ventana, QPS 0.4833, P99 131594.176 ms, throttling 3239.48 s, RSS máx 782.4 MiB, spill false
+== 11:29:34 corrida 88 de 108
+[mongo_C_Q2_c1_r3] preparando motor y limpiando caché
+[mongo_C_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c1_r3] enfriamiento 60 s
+[mongo_C_Q2_c1_r3] ok: 6550 consultas en la ventana, QPS 21.8333, P99 100.284 ms, throttling 19.558 s, RSS máx 370.7 MiB, spill false
+== 11:36:43 corrida 89 de 108
+[mongo_C_Q2_c10_r3] preparando motor y limpiando caché
+[mongo_C_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c10_r3] enfriamiento 60 s
+[mongo_C_Q2_c10_r3] ok: 2674 consultas en la ventana, QPS 8.9133, P99 1508.964 ms, throttling 2733.392 s, RSS máx 406.2 MiB, spill false
+== 11:43:53 corrida 90 de 108
+[mongo_C_Q2_c50_r3] preparando motor y limpiando caché
+[mongo_C_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[mongo_C_Q2_c50_r3] enfriamiento 60 s
+[mongo_C_Q2_c50_r3] ok: 2351 consultas en la ventana, QPS 7.8367, P99 12399.555 ms, throttling 3287.512 s, RSS máx 478.1 MiB, spill false
+== 11:51:05 corrida 91 de 108
+[postgres_A_Q1_c1_r3] preparando motor y limpiando caché
+[postgres_A_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c1_r3] enfriamiento 60 s
+[postgres_A_Q1_c1_r3] spill: 162 consultas en la ventana, QPS 0.54, P99 2571.708 ms, throttling 0.0 s, RSS máx 114.8 MiB, spill true
+== 11:58:14 corrida 92 de 108
+[postgres_A_Q1_c10_r3] preparando motor y limpiando caché
+[postgres_A_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c10_r3] enfriamiento 60 s
+[postgres_A_Q1_c10_r3] spill: 167 consultas en la ventana, QPS 0.5567, P99 29998.655 ms, throttling 627.313 s, RSS máx 602.7 MiB, spill true
+== 12:05:26 corrida 93 de 108
+[postgres_A_Q1_c50_r3] preparando motor y limpiando caché
+[postgres_A_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q1_c50_r3] enfriamiento 60 s
+[postgres_A_Q1_c50_r3] spill: 62 consultas en la ventana, QPS 0.2067, P99 184917.382 ms, throttling 226.86 s, RSS máx 2090.6 MiB, spill true
+== 12:13:22 corrida 94 de 108
+[postgres_A_Q2_c1_r3] preparando motor y limpiando caché
+[postgres_A_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c1_r3] enfriamiento 60 s
+[postgres_A_Q2_c1_r3] ok: 3448 consultas en la ventana, QPS 11.4933, P99 91.804 ms, throttling 0.0 s, RSS máx 15.7 MiB, spill false
+== 12:20:30 corrida 95 de 108
+[postgres_A_Q2_c10_r3] preparando motor y limpiando caché
+[postgres_A_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c10_r3] enfriamiento 60 s
+[postgres_A_Q2_c10_r3] ok: 11439 consultas en la ventana, QPS 38.13, P99 307.132 ms, throttling 1750.324 s, RSS máx 31.6 MiB, spill false
+== 12:27:38 corrida 96 de 108
+[postgres_A_Q2_c50_r3] preparando motor y limpiando caché
+[postgres_A_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_A_Q2_c50_r3] enfriamiento 60 s
+[postgres_A_Q2_c50_r3] ok: 9848 consultas en la ventana, QPS 32.8267, P99 2899.882 ms, throttling 2388.782 s, RSS máx 107.2 MiB, spill false
+== 12:34:48 corrida 97 de 108
+[postgres_B_Q1_c1_r3] preparando motor y limpiando caché
+[postgres_B_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c1_r3] enfriamiento 60 s
+[postgres_B_Q1_c1_r3] spill: 126 consultas en la ventana, QPS 0.42, P99 3639.866 ms, throttling 88.95 s, RSS máx 108.1 MiB, spill true
+== 12:41:57 corrida 98 de 108
+[postgres_B_Q1_c10_r3] preparando motor y limpiando caché
+[postgres_B_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c10_r3] enfriamiento 60 s
+[postgres_B_Q1_c10_r3] spill: 109 consultas en la ventana, QPS 0.3633, P99 34035.144 ms, throttling 1576.361 s, RSS máx 602.1 MiB, spill true
+== 12:49:13 corrida 99 de 108
+[postgres_B_Q1_c50_r3] preparando motor y limpiando caché
+[postgres_B_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q1_c50_r3] enfriamiento 60 s
+[postgres_B_Q1_c50_r3] oom: 3 consultas en la ventana, QPS 0.01, P99 39575.879 ms, throttling 1761.167 s, RSS máx 1835.8 MiB, spill true
+== 12:56:24 corrida 100 de 108
+[postgres_B_Q2_c1_r3] preparando motor y limpiando caché
+[postgres_B_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c1_r3] enfriamiento 60 s
+[postgres_B_Q2_c1_r3] ok: 3478 consultas en la ventana, QPS 11.5933, P99 90.568 ms, throttling 0.0 s, RSS máx 7.0 MiB, spill false
+== 13:03:32 corrida 101 de 108
+[postgres_B_Q2_c10_r3] preparando motor y limpiando caché
+[postgres_B_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c10_r3] enfriamiento 60 s
+[postgres_B_Q2_c10_r3] ok: 4102 consultas en la ventana, QPS 13.6733, P99 891.364 ms, throttling 2377.296 s, RSS máx 29.8 MiB, spill false
+== 13:10:41 corrida 102 de 108
+[postgres_B_Q2_c50_r3] preparando motor y limpiando caché
+[postgres_B_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_B_Q2_c50_r3] enfriamiento 60 s
+[postgres_B_Q2_c50_r3] ok: 3666 consultas en la ventana, QPS 12.22, P99 8398.747 ms, throttling 2989.18 s, RSS máx 107.4 MiB, spill false
+== 13:17:52 corrida 103 de 108
+[postgres_C_Q1_c1_r3] preparando motor y limpiando caché
+[postgres_C_Q1_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c1_r3] enfriamiento 60 s
+[postgres_C_Q1_c1_r3] spill: 82 consultas en la ventana, QPS 0.2733, P99 3976.711 ms, throttling 356.56 s, RSS máx 108.5 MiB, spill true
+== 13:25:03 corrida 104 de 108
+[postgres_C_Q1_c10_r3] preparando motor y limpiando caché
+[postgres_C_Q1_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c10_r3] enfriamiento 60 s
+[postgres_C_Q1_c10_r3] spill: 40 consultas en la ventana, QPS 0.1333, P99 86700.59 ms, throttling 2208.381 s, RSS máx 593.1 MiB, spill true
+== 13:32:47 corrida 105 de 108
+[postgres_C_Q1_c50_r3] preparando motor y limpiando caché
+[postgres_C_Q1_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q1_c50_r3] enfriamiento 60 s
+[postgres_C_Q1_c50_r3] oom: 0 consultas en la ventana, QPS 0.0, P99  ms, throttling 3230.715 s, RSS máx 957.6 MiB, spill 
+== 13:40:28 corrida 106 de 108
+[postgres_C_Q2_c1_r3] preparando motor y limpiando caché
+[postgres_C_Q2_c1_r3] 1 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c1_r3] enfriamiento 60 s
+[postgres_C_Q2_c1_r3] ok: 3506 consultas en la ventana, QPS 11.6867, P99 95.498 ms, throttling 1.629 s, RSS máx 13.6 MiB, spill false
+== 13:47:36 corrida 107 de 108
+[postgres_C_Q2_c10_r3] preparando motor y limpiando caché
+[postgres_C_Q2_c10_r3] 10 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c10_r3] enfriamiento 60 s
+[postgres_C_Q2_c10_r3] ok: 1671 consultas en la ventana, QPS 5.57, P99 2108.611 ms, throttling 2696.922 s, RSS máx 32.2 MiB, spill false
+== 13:54:46 corrida 108 de 108
+[postgres_C_Q2_c50_r3] preparando motor y limpiando caché
+[postgres_C_Q2_c50_r3] 50 clientes; calentamiento 60 s, medición 300 s
+[postgres_C_Q2_c50_r3] enfriamiento 60 s
+[postgres_C_Q2_c50_r3] ok: 1522 consultas en la ventana, QPS 5.0733, P99 21189.702 ms, throttling 3285.192 s, RSS máx 109.4 MiB, spill false
+Matriz completa: 108 de 108 corridas en results/mediciones.csv

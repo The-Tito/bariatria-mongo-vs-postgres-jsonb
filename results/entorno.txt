@@ -25,3 +25,32 @@
   [OK]    drop_caches disponible desde un contenedor privilegiado
 
 RESULTADO: el entorno cumple
+######## 2026-10-31 00:50:50 CST
+== Host
+  fecha: 2026-10-31T06:50:50Z
+  sistema: Darwin 27.0.0 arm64
+  cpu: Apple M4 Pro (12 núcleos)
+  memoria: 24 GiB
+  python: Python 3.13.2
+== Docker
+  servidor: 29.9.2 | Docker Desktop | kernel 7.0.14-linuxkit | aarch64
+  recursos del daemon: 12 CPU, 8319238144 bytes
+  cgroups: v2 (cgroupfs) | almacenamiento: overlayfs
+  [OK]    cgroups v2
+  [OK]    memoria del daemon >= 6 GiB
+  [OK]    CPU del daemon >= 6
+== Límites del perfil C aplicados por cgroups (1 CPU, 1 GiB, sin swap)
+  cpu.max=100000 100000 memory.max=1073741824 memory.swap.max=0
+  [OK]    cuota de 1 CPU
+  [OK]    límite de 1 GiB
+  [OK]    swap desactivado (memory-swap = memory)
+== Throttling CFS (2 hilos ocupados con 1 CPU durante 3 s)
+  nr_periods 31
+  nr_throttled 30
+  throttled_usec 2975964
+  [OK]    el throttling se registra en cpu.stat
+== Limpieza de caché del sistema (drop_caches)
+  [OK]    drop_caches disponible desde un contenedor privilegiado
+
+RESULTADO: el entorno cumple
+

@@ -1,0 +1,143 @@
+{
+  "id": "postgres_C_Q1_c50_r3",
+  "engine": "postgres",
+  "profile": "PROFILE_C_SEVERE",
+  "query_id": "Q1",
+  "consulta": "Q1",
+  "variante_work_mem": null,
+  "concurrency": 50,
+  "run_number": 3,
+  "carga": "lazo cerrado",
+  "duraciones_s": {
+    "calentamiento": 60,
+    "medicion": 300,
+    "enfriamiento": 60
+  },
+  "timeout_consulta_s": 300,
+  "fases": {
+    "preparacion_inicio": 1793475167.222708,
+    "preparacion_fin": 1793475174.205065,
+    "carga_inicio": 1793475175.891016,
+    "ventana_inicio": 1793475235.891016,
+    "ventana_fin": 1793475535.891016,
+    "carga_fin": 1793475568.4130921,
+    "enfriamiento_fin": 1793475628.421152
+  },
+  "contenedor_inicio": {
+    "id": "dddef94ed8d1a05d0d741c506db463a68b17c0eeb3d4229f17cab97ae6647c4a",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T19:32:48.23461075Z"
+  },
+  "config_motor": {
+    "max_connections": "100",
+    "max_parallel_workers": "8",
+    "max_parallel_workers_per_gather": "2",
+    "server_version": "18.4 (Debian 18.4-1.pgdg13+1)",
+    "shared_buffers": "16384 8kB",
+    "temp_file_limit": "-1 kB",
+    "work_mem": "4096 kB"
+  },
+  "contadores_inicio": {
+    "t": 1793475235.8962939,
+    "cgroup": {
+      "usage_usec": 58615748,
+      "user_usec": 14428661,
+      "system_usec": 44187086,
+      "nice_usec": 0,
+      "nr_periods": 609,
+      "nr_throttled": 581,
+      "throttled_usec": 632268446,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 62462,
+      "oom": 16,
+      "oom_kill": 5,
+      "oom_group_kill": 0,
+      "sock_throttled": 345
+    },
+    "spill": {
+      "temp_files": 0,
+      "temp_bytes": 0
+    }
+  },
+  "contadores_fin": {
+    "t": 1793475535.893415,
+    "cgroup": {
+      "usage_usec": 354412618,
+      "user_usec": 77717291,
+      "system_usec": 276695327,
+      "nice_usec": 0,
+      "nr_periods": 3613,
+      "nr_throttled": 3525,
+      "throttled_usec": 3862983688,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 386678,
+      "oom": 57,
+      "oom_kill": 26,
+      "oom_group_kill": 0,
+      "sock_throttled": 886
+    },
+    "spill_error": "OperationalError: connection failed: connection to server at \"127.0.0.1\", port 5433 failed: server closed the connection unexpectedly\n\tThis probably means the server terminated abnormally\n\tbefore or while processing the request."
+  },
+  "disco_host": {
+    "min_libre_bytes": 61016801280,
+    "abortado": false
+  },
+  "contenedor_fin": {
+    "id": "dddef94ed8d1a05d0d741c506db463a68b17c0eeb3d4229f17cab97ae6647c4a",
+    "imagen": "postgres:18.4",
+    "digest": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": true,
+    "exit_code": 0,
+    "started_at": "2026-10-31T19:32:48.23461075Z"
+  },
+  "consultas": {
+    "total": 2645,
+    "en_ventana": 2200,
+    "exitosas_en_ventana": 0,
+    "fallidas_total": 2645,
+    "errores": {
+      "OperationalError: consuming input failed: server closed the connection unexpectedly": 1350,
+      "OperationalError: the connection is closed": 1295
+    }
+  },
+  "oom_kill_eventos": 21,
+  "max_working_set_mb": 1023.5,
+  "spill_evidencia": {
+    "contadores_validos": false,
+    "por_contadores": false,
+    "lineas_log_en_ventana": 0
+  },
+  "fila_csv": {
+    "timestamp_epoch": 1793475235,
+    "engine": "postgres",
+    "profile": "PROFILE_C_SEVERE",
+    "query_id": "Q1",
+    "concurrency": 50,
+    "run_number": 3,
+    "throughput_qps": 0.0,
+    "latency_p50_ms": "",
+    "latency_p95_ms": "",
+    "latency_p99_ms": "",
+    "cpu_throttled_seconds": 3230.715,
+    "max_rss_mb": 957.6,
+    "disk_spill": "",
+    "status": "oom"
+  }
+}

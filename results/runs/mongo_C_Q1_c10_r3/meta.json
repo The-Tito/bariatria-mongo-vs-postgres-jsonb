@@ -1,0 +1,142 @@
+{
+  "id": "mongo_C_Q1_c10_r3",
+  "engine": "mongo",
+  "profile": "PROFILE_C_SEVERE",
+  "query_id": "Q1",
+  "consulta": "Q1",
+  "variante_work_mem": null,
+  "concurrency": 10,
+  "run_number": 3,
+  "carga": "lazo cerrado",
+  "duraciones_s": {
+    "calentamiento": 60,
+    "medicion": 300,
+    "enfriamiento": 60
+  },
+  "timeout_consulta_s": 300,
+  "fases": {
+    "preparacion_inicio": 1793466814.135565,
+    "preparacion_fin": 1793466821.005077,
+    "carga_inicio": 1793466822.157276,
+    "ventana_inicio": 1793466882.157276,
+    "ventana_fin": 1793467182.157276,
+    "carga_fin": 1793467188.0111659,
+    "enfriamiento_fin": 1793467248.0114071
+  },
+  "contenedor_inicio": {
+    "id": "11bf99daee63d9899d42e126524ae8bb2bb9066192065790e9d1108190beaf79",
+    "imagen": "mongo:8.0.32",
+    "digest": "mongo@sha256:d0d926f94df099bff534b7ee5b5986458131a22489dfff8664509af0c1e2ca9c",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T17:13:35.119468508Z"
+  },
+  "config_motor": {
+    "version": "8.0.32",
+    "wiredtiger_cache_bytes": 268435456
+  },
+  "contadores_inicio": {
+    "t": 1793466882.1624901,
+    "cgroup": {
+      "usage_usec": 61069728,
+      "user_usec": 59797020,
+      "system_usec": 1272708,
+      "nice_usec": 0,
+      "nr_periods": 651,
+      "nr_throttled": 606,
+      "throttled_usec": 564896810,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0,
+      "sock_throttled": 0
+    },
+    "spill": {
+      "sort_spillToDisk": 0,
+      "group_spills": 0,
+      "sort_spillToDiskBytes": 0,
+      "group_spilledBytes": 0
+    }
+  },
+  "contadores_fin": {
+    "t": 1793467182.161361,
+    "cgroup": {
+      "usage_usec": 360820593,
+      "user_usec": 354602316,
+      "system_usec": 6218277,
+      "nice_usec": 0,
+      "nr_periods": 3649,
+      "nr_throttled": 3604,
+      "throttled_usec": 3377904863,
+      "nr_bursts": 0,
+      "burst_usec": 0,
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0,
+      "sock_throttled": 0
+    },
+    "spill": {
+      "sort_spillToDisk": 0,
+      "group_spills": 0,
+      "sort_spillToDiskBytes": 0,
+      "group_spilledBytes": 0
+    }
+  },
+  "disco_host": {
+    "min_libre_bytes": 62671699968,
+    "abortado": false
+  },
+  "contenedor_fin": {
+    "id": "11bf99daee63d9899d42e126524ae8bb2bb9066192065790e9d1108190beaf79",
+    "imagen": "mongo:8.0.32",
+    "digest": "mongo@sha256:d0d926f94df099bff534b7ee5b5986458131a22489dfff8664509af0c1e2ca9c",
+    "nano_cpus": 1000000000,
+    "memory": 1073741824,
+    "memory_swap": 1073741824,
+    "running": true,
+    "oom_killed": false,
+    "exit_code": 0,
+    "started_at": "2026-10-31T17:13:35.119468508Z"
+  },
+  "consultas": {
+    "total": 158,
+    "en_ventana": 128,
+    "exitosas_en_ventana": 128,
+    "fallidas_total": 0,
+    "errores": {}
+  },
+  "oom_kill_eventos": 0,
+  "max_working_set_mb": 801.9,
+  "spill_evidencia": {
+    "contadores_validos": true,
+    "por_contadores": false,
+    "lineas_log_en_ventana": 0
+  },
+  "fila_csv": {
+    "timestamp_epoch": 1793466882,
+    "engine": "mongo",
+    "profile": "PROFILE_C_SEVERE",
+    "query_id": "Q1",
+    "concurrency": 10,
+    "run_number": 3,
+    "throughput_qps": 0.4267,
+    "latency_p50_ms": 22807.843,
+    "latency_p95_ms": 25706.447,
+    "latency_p99_ms": 26001.844,
+    "cpu_throttled_seconds": 2813.008,
+    "max_rss_mb": 633.0,
+    "disk_spill": "false",
+    "status": "ok"
+  }
+}
