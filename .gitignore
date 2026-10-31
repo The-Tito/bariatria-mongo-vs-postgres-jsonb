@@ -1,0 +1,19 @@
+# Material de clase, análisis y borradores del reporte: se manejan solo en local
+context/
+docs/
+
+# Entorno de Python
+.venv/
+__pycache__/
+*.pyc
+
+# Dataset generado: se reproduce con el generador y su semilla
+data/
+
+# Resultados crudos de corridas locales (el CSV consolidado sí se versiona)
+results/raw/
+
+# Sistema operativo y editores
+.DS_Store
+.vscode/
+.idea/
