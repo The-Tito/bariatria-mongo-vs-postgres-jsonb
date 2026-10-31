@@ -351,13 +351,18 @@ def correr(a):
     meta["fila_csv"] = fila
     (carpeta / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
 
+    # Repetir una corrida reemplaza su fila en lugar de duplicarla
     csv_path = salida / "mediciones.csv"
-    nuevo = not csv_path.exists()
-    with open(csv_path, "a", newline="") as f:
+    llave = ("engine", "profile", "query_id", "concurrency", "run_number")
+    filas = []
+    if csv_path.exists():
+        with open(csv_path, newline="") as f:
+            filas = [r for r in csv.DictReader(f) if tuple(r[k] for k in llave) != tuple(str(fila[k]) for k in llave)]
+    filas.append(fila)
+    with open(csv_path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COLUMNAS)
-        if nuevo:
-            w.writeheader()
-        w.writerow(fila)
+        w.writeheader()
+        w.writerows(filas)
     print(f"[{run_id}] {status}: {len(exitosas)} consultas en la ventana, QPS {fila['throughput_qps']}, "
           f"P99 {fila['latency_p99_ms']} ms, throttling {fila['cpu_throttled_seconds']} s, "
           f"RSS máx {fila['max_rss_mb']} MiB, spill {fila['disk_spill']}", flush=True)
