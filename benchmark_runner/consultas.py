@@ -30,13 +30,17 @@ def conectar_mongo():
     return MongoClient(MONGO_URI, uuidRepresentation="standard")[MONGO_DB]
 
 
-def conectar_postgres():
+def conectar_postgres(timeout_s=None):
     import psycopg
-    return psycopg.connect(PG_DSN, autocommit=True)
+    con = psycopg.connect(PG_DSN, autocommit=True)
+    if timeout_s:
+        con.execute(f"SET statement_timeout = '{int(timeout_s)}s'")
+    return con
 
 
-def ejecutar_mongo(db, qid):
-    filas = list(db.visitas.aggregate(pipeline(qid)))
+def ejecutar_mongo(db, qid, timeout_s=None):
+    opciones = {"maxTimeMS": int(timeout_s * 1000)} if timeout_s else {}
+    filas = list(db.visitas.aggregate(pipeline(qid), **opciones))
     if qid == "Q1":
         return [(d["_id"]["anio"], d["_id"]["medicamento"], d["prescripciones"],
                  d["dosis_diaria_total_mg"], d["dosis_diaria_prom_mg"]) for d in filas]
