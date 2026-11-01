@@ -35,6 +35,7 @@ COMPLETAS = {"ok", "spill"}
 COLOR = {"mongo": "#2a78d6", "postgres": "#eb6834"}
 MARCADOR = {"mongo": "o", "postgres": "s"}
 NOMBRE = {"mongo": "MongoDB", "postgres": "PostgreSQL JSONB"}
+SIGLA = {"mongo": "M", "postgres": "PG"}
 SUPERFICIE, TINTA, TINTA_2, REJILLA = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3de"
 
 
@@ -98,7 +99,7 @@ def consolidar(carpeta):
                 continue
             ok = m["consultas"]["exitosas_en_ventana"]
             muestras.append(ok)
-            ws.append(m.get("max_working_set_mb"))  # incluye memoria compartida y caché de páginas, a diferencia del RSS
+            ws.append(m.get("max_working_set_mb"))  # uso menos caché inactiva: incluye memoria compartida, a diferencia del RSS
             g0, g1 = m["contadores_inicio"]["cgroup"], m["contadores_fin"]["cgroup"]
             if g1 and "nr_periods" in g0 and "nr_periods" in g1 and g1["nr_periods"] > g0["nr_periods"]:
                 fraccion.append((g1["nr_throttled"] - g0["nr_throttled"]) / (g1["nr_periods"] - g0["nr_periods"]))
@@ -239,21 +240,27 @@ def graficas(celdas, carpeta, destino):
     fig.savefig(destino / "p99_vs_concurrencia.png", dpi=160)
     plt.close(fig)
 
-    # 2. Throttling vs QPS: una gráfica por consulta; forma del marcador = motor, etiqueta = perfil y clientes
+    # 2. Throttling vs QPS: una gráfica por consulta; forma del marcador = motor, etiqueta = motor, perfil y clientes
     alto = 4.4
     fig, ejes = plt.subplots(1, len(consultas), figsize=(5.2 * len(consultas), alto), squeeze=False)
     for j, qid in enumerate(consultas):
         ax = ejes[0][j]
+        sin_qps = []  # QPS 0 no cabe en escala log: se nombra en el panel en lugar de omitirse en silencio
         for m in motores:
+            sin_qps += [f"{SIGLA[m]} {CORTO[c['profile']]}·{c['concurrency']}" for c in celdas
+                        if c["engine"] == m and c["query_id"] == qid and not c["throughput_qps_mediana"]]
             pts = [c for c in celdas if c["engine"] == m and c["query_id"] == qid
                    and c["cpu_throttled_seconds_mediana"] is not None and c["throughput_qps_mediana"]]
             ax.scatter([c["cpu_throttled_seconds_mediana"] for c in pts], [c["throughput_qps_mediana"] for c in pts],
                        color=COLOR[m], marker=MARCADOR[m], s=42, edgecolors=SUPERFICIE, linewidths=1.5)
             for c in pts:
                 if c["concurrency"] == 50:  # etiquetas selectivas: solo la concurrencia máxima
-                    ax.annotate(f"{CORTO[c['profile']]}·50", (c["cpu_throttled_seconds_mediana"],
+                    ax.annotate(f"{SIGLA[m]} {CORTO[c['profile']]}·50", (c["cpu_throttled_seconds_mediana"],
                                 c["throughput_qps_mediana"]), textcoords="offset points", xytext=(5, 3),
-                                fontsize=7, color=TINTA_2)
+                                fontsize=7, color=COLOR[m])
+        if sin_qps:
+            ax.text(0.02, 0.03, "QPS = 0, fuera de la escala: " + ", ".join(sin_qps), transform=ax.transAxes,
+                    fontsize=7, color=TINTA_2)
         ax.set_xscale("symlog", linthresh=1)
         ax.set_yscale("log")
         ax.set_title(qid, loc="left")
@@ -266,12 +273,13 @@ def graficas(celdas, carpeta, destino):
     plt.close(fig)
 
     # 3. Memoria máxima vs concurrencia, con el límite de memoria del perfil. El RSS no cuenta la memoria
-    # compartida (shared_buffers de Postgres); el working set sí, y es lo que el cgroup compara con su límite
+    # compartida (shared_buffers de Postgres); el working set sí (uso total menos caché inactiva). El kernel compara
+    # el uso total con memory.max y libera caché antes de matar procesos: el working set es la mejor aproximación
     for kpi, eje, titulo, archivo in [
             ("max_rss_mb", "RSS máximo (MiB)", "Memoria residente máxima frente a concurrencia",
              "rss_vs_concurrencia.png"),
             ("max_working_set_mb", "Working set máximo (MiB)",
-             "Working set máximo frente a concurrencia (incluye memoria compartida y caché de páginas)",
+             "Working set máximo frente a concurrencia (uso total menos caché inactiva)",
              "working_set_vs_concurrencia.png")]:
         alto = 2.9 * len(consultas) + 0.7
         fig, ejes = plt.subplots(len(consultas), len(perfiles), figsize=(3.4 * len(perfiles), alto),
@@ -313,11 +321,9 @@ def graficas(celdas, carpeta, destino):
                 meta = json.loads((r / "meta.json").read_text())
                 t0 = meta["fases"]["carga_inicio"]
                 datos = [x for x in csv.DictReader(gzip.open(r / "metricas.csv.gz", "rt")) if x[col]]
+                # El estado va en la leyenda: anotado al final de la línea tapaba la curva
                 ax.plot([float(x["t"]) - t0 for x in datos], [float(x[col]) / 2 ** 20 for x in datos],
-                        color=COLOR[m], label=NOMBRE[m])
-                ax.annotate(f"{NOMBRE[m]}: {meta['fila_csv']['status']}", (float(datos[-1]["t"]) - t0,
-                            float(datos[-1][col]) / 2 ** 20), textcoords="offset points", xytext=(-4, 6),
-                            ha="right", fontsize=7, color=TINTA_2)
+                        color=COLOR[m], label=f"{NOMBRE[m]} ({meta['fila_csv']['status']})")
             meta = json.loads((next(iter(corridas.values())) / "meta.json").read_text())
             f = meta["fases"]
             ax.axvspan(f["ventana_inicio"] - f["carga_inicio"], f["ventana_fin"] - f["carga_inicio"], color=REJILLA,
@@ -325,6 +331,7 @@ def graficas(celdas, carpeta, destino):
             ax.axhline(LIMITE_MIB["PROFILE_C_SEVERE"], color=TINTA_2, linewidth=1, linestyle="--")
             ax.text(0, LIMITE_MIB["PROFILE_C_SEVERE"], "límite 1,024 MiB", fontsize=7, color=TINTA_2, va="bottom", ha="right")
             ax.set_ylim(0, 1150)
+            # La carga termina cuando acaba la última consulta en curso, así que cada motor termina a su tiempo
             ax.set_xlabel("Segundos desde el inicio de la carga (zona sombreada: ventana de medición)")
             ax.set_ylabel(f"{nombre[0].upper()}{nombre[1:]} (MiB)")
             ax.set_title(f"Curva de {nombre} · {qid}, perfil C, 50 clientes, rep. 1", loc="left", pad=22)
