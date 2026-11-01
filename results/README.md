@@ -35,7 +35,7 @@ timestamp_epoch,engine,profile,query_id,concurrency,run_number,throughput_qps,la
 | `run_number` | Repetición: 1, 2 o 3 |
 | `throughput_qps` | Consultas **terminadas con éxito dentro de la ventana** ÷ duración de la ventana (300 s) |
 | `latency_p50_ms`, `latency_p95_ms`, `latency_p99_ms` | Percentiles (rango más cercano) de las latencias de esas consultas, en ms. La latencia se mide en el cliente: desde que se envía la consulta hasta que se consume el último resultado |
-| `cpu_throttled_seconds` | Segundos de CPU estrangulada del contenedor durante la ventana: diferencia de `throttled_usec` en `cpu.stat` (cgroups v2) entre el inicio y el fin, ÷ 10⁶. Es el mismo contador que expone cAdvisor como `container_cpu_cfs_throttled_seconds_total`; se lee directamente para que los límites de la ventana sean exactos, y la serie de cAdvisor queda en `runs/` para contrastar. **Suma el tiempo que espera cada proceso o hilo listo para correr**, así que puede superar la duración de la ventana (p. ej., 3 procesos de Postgres estrangulados durante 20 s ≈ 60 s). En `meta.json` quedan también `nr_periods` y `nr_throttled` para calcular la fracción de periodos estrangulados |
+| `cpu_throttled_seconds` | Segundos de CPU estrangulada del contenedor durante la ventana: diferencia de `throttled_usec` en `cpu.stat` (cgroups v2) entre el inicio y el fin, ÷ 10⁶. Es el mismo contador que expone cAdvisor como `container_cpu_cfs_throttled_seconds_total`; se lee directamente para que los límites de la ventana sean exactos, y la serie de cAdvisor queda en `runs/` para contrastar. **El kernel lo acumula por CPU**: suma el tiempo que la cola de cada CPU pasó estrangulada, sin importar cuántos procesos esperaban en ella. Por eso puede superar la duración de la ventana, con un máximo de *CPU visibles × ventana* (en este entorno, 12 × 300 s = 3,600 s; el mayor valor medido fue 3,300.7 s). No mide cuántos hilos esperaron, sino en cuántas CPU y durante cuánto tiempo el contenedor no pudo correr. En `meta.json` quedan también `nr_periods` y `nr_throttled` para calcular la fracción de periodos estrangulados |
 | `max_rss_mb` | Máximo de `container_memory_rss` (cAdvisor, cada 1 s) durante la ventana, en MiB |
 | `disk_spill` | `true` si el motor escribió datos temporales durante la ventana. MongoDB: aumento de `metrics.query.sort.spillToDisk` o `metrics.query.group.spills` en `serverStatus`. PostgreSQL: aumento de `temp_files` en `pg_stat_database`. **Vacío** si no se pudieron leer los contadores al inicio o al fin de la ventana (por ejemplo, con el motor en recuperación tras un OOM); el motivo queda en `meta.json` |
 | `status` | `oom` si el contenedor murió por falta de memoria (`State.OOMKilled`); si no, `error` si alguna consulta falló o ninguna terminó; si no, `spill` si `disk_spill` es `true`; si no, `ok` |
@@ -85,8 +85,10 @@ por una sola repetición atípica, y con 3 valores el rango muestra la dispersi�
 - Latencias y M3 (CPU y RSS por 1,000 documentos leídos) solo con repeticiones completas (`ok`/`spill`):
   las pocas consultas que terminan entre reinicios de un OOM no representan a la celda. QPS, throttling y
   memoria usan las 3 (un QPS cercano a 0 es el dato real de una celda con OOM).
-- Además del RSS del CSV, el working set máximo (`runs/<id>/meta.json`): incluye memoria compartida
-  (`shared_buffers`) y caché de páginas, y es lo que el cgroup compara con su límite.
+- Además del RSS del CSV, el working set máximo (`runs/<id>/meta.json`): el uso total menos la caché
+  inactiva, así que sí incluye la memoria compartida (`shared_buffers`) y la caché activa. El kernel compara
+  el uso total (`memory.current`) con `memory.max` y libera caché antes de matar procesos; el working set es la
+  mejor aproximación de la memoria que no puede liberar (la misma métrica que usa Kubernetes para desalojar).
 - Gráficas: P99 frente a concurrencia, throttling frente a QPS, RSS y working set frente a concurrencia, y
   sus curvas en el tiempo en la celda más exigente (perfil C, 50 clientes).
 
